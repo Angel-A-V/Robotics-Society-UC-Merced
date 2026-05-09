@@ -31,6 +31,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'daphne',                        # MUST be first — replaces Django's built-in dev server with WebSocket support
     'django.contrib.admin',          # Built-in admin panel at /admin
     'django.contrib.auth',           # Built-in user authentication system
     'django.contrib.contenttypes',
@@ -40,12 +41,25 @@ INSTALLED_APPS = [
     'rest_framework',                # Django REST Framework — lets us build API endpoints
     'rest_framework_simplejwt',      # JWT tokens for login sessions
     'corsheaders',                   # Allows our React frontend to talk to Django
+    'channels',                      # Adds WebSocket support to Django
     'api',                           # Our custom app
 ]
+
+# Tells Django to use our ASGI application (with WebSocket support) instead of WSGI
+ASGI_APPLICATION = 'core.asgi.application'
+
+# Channel layer — stores active WebSocket connection groups in memory during development.
+# Swap for RedisChannelLayer when you deploy to production.
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels.layers.InMemoryChannelLayer'
+    }
+}
 
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',   # MUST be first — handles CORS headers
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',  # Serves static files (admin CSS/JS) via daphne
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -120,7 +134,17 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
-STATIC_URL = 'static/'
+import os
+
+STATIC_URL = '/static/'
+
+# STATIC_ROOT — collectstatic copies all static files here (Django admin CSS/JS etc).
+# WhiteNoise then serves them directly through daphne — no Nginx or separate static server needed.
+# Run once after any Django upgrade: python manage.py collectstatic
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
+# WhiteNoise compression — serves gzipped static files automatically
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field

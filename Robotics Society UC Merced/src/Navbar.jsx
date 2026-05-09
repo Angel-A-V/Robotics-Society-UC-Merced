@@ -8,6 +8,7 @@ export default function Navbar({ user, handleLogout }) {
   const navigate = useNavigate()
   const [menuOpen, setMenuOpen] = useState(false)  // Mobile hamburger state
 
+
   const isHome = location.pathname === '/'
 
   // Clicking "Home" always scrolls to top of homepage
@@ -64,6 +65,7 @@ export default function Navbar({ user, handleLogout }) {
 
       {/* ── Desktop actions ── */}
       <div className="nav-actions">
+
         {user ? (
           <>
             <Link to="/portal" className="btn btn-outline">Portal</Link>

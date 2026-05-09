@@ -1,6 +1,7 @@
 from django.contrib import admin
-
-# Register your models here.
-from .models import User
+from .models import User, Channel, Message, Announcement
 
 admin.site.register(User)
+admin.site.register(Channel)
+admin.site.register(Message)
+admin.site.register(Announcement)

@@ -1,50 +1,66 @@
+// Portal.jsx — Members-only dashboard
+// Tabs: Announcements | Chat (now real-time via WebSocket) | Admin Panel
+
 import { useState, useEffect, useRef } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
+import { useSocket } from '../hooks/useSocket'  // Real-time WebSocket hook
 
 export default function Portal({ user, handleLogout }) {
   const navigate = useNavigate()
-  const [tab, setTab] = useState('announcements')
-  const [announcements, setAnnouncements] = useState([])
-  const [messages, setMessages] = useState([])
-  const [channels, setChannels] = useState([])
-  const [activeChannel, setActiveChannel] = useState(null)
-  const [msgInput, setMsgInput] = useState('')
-  const [users, setUsers] = useState([])
-  const [loading, setLoading] = useState(true)
-  const [announcementForm, setAnnouncementForm] = useState({ title: '', content: '', is_pinned: false })
-  const [showAnnouncementForm, setShowAnnouncementForm] = useState(false)
-  const chatEndRef = useRef(null)
 
+  // ── Tab state ──────────────────────────────────────────────────────
+  const [tab, setTab] = useState('announcements')
+
+  // ── Announcements state ────────────────────────────────────────────
+  const [announcements, setAnnouncements]               = useState([])
+  const [announcementForm, setAnnouncementForm]         = useState({ title: '', content: '', is_pinned: false })
+  const [showAnnouncementForm, setShowAnnouncementForm] = useState(false)
+
+  // ── Chat state ─────────────────────────────────────────────────────
+  const [channels, setChannels]         = useState([])
+  const [activeChannel, setActiveChannel] = useState(null)
+  const [msgInput, setMsgInput]         = useState('')
+  const chatEndRef                      = useRef(null)
+
+  // ── Admin state ────────────────────────────────────────────────────
+  const [users, setUsers] = useState([])
+
+  // ── Auth ───────────────────────────────────────────────────────────
   const token = localStorage.getItem('access_token')
   const authHeaders = { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' }
 
-  // Redirect if not logged in
+  // ── WebSocket — replaces the old setInterval polling ───────────────
+  // When activeChannel changes, useSocket closes the old WS and opens a new one.
+  // messages is the live list of messages for the current channel.
+  // connected shows whether the WS handshake is complete.
+  const { messages, setMessages, sendMessage, connected, hasChannel } = useSocket(activeChannel?.id, token)
+
+  // ── Redirect if not logged in ──────────────────────────────────────
   useEffect(() => {
     if (!user) navigate('/login')
   }, [user])
 
+  // ── Load initial data on mount ─────────────────────────────────────
   useEffect(() => {
     if (!user) return
     fetchAnnouncements()
     fetchChannels()
     if (user.role === 'admin') fetchUsers()
-    setLoading(false)
   }, [user])
 
+  // ── Load message history when switching channels ───────────────────
+  // The WebSocket only delivers NEW messages in real time.
+  // We still fetch history via REST on channel switch so existing messages show up.
   useEffect(() => {
-    if (activeChannel) fetchMessages(activeChannel.id)
+    if (activeChannel) fetchMessageHistory(activeChannel.id)
   }, [activeChannel])
 
+  // ── Auto-scroll to bottom when messages arrive ─────────────────────
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: 'smooth' })
   }, [messages])
 
-  // Poll for new messages every 3 seconds
-  useEffect(() => {
-    if (!activeChannel) return
-    const interval = setInterval(() => fetchMessages(activeChannel.id), 3000)
-    return () => clearInterval(interval)
-  }, [activeChannel])
+  // ── Fetchers ───────────────────────────────────────────────────────
 
   async function fetchAnnouncements() {
     const res = await fetch('/api/announcements/', { headers: authHeaders })
@@ -56,13 +72,35 @@ export default function Portal({ user, handleLogout }) {
     if (res.ok) {
       const data = await res.json()
       setChannels(data)
+      // Auto-select the first channel
       if (data.length > 0) setActiveChannel(data[0])
     }
   }
 
-  async function fetchMessages(channelId) {
-    const res = await fetch(`/api/chat/channels/${channelId}/messages/`, { headers: authHeaders })
-    if (res.ok) setMessages(await res.json())
+  async function fetchMessageHistory(channelId) {
+    // Load existing message history from REST API when switching channels.
+    // The WebSocket only delivers NEW messages going forward after the connection opens.
+    // Without this, you'd only see messages sent while you're actively connected.
+    // With this: REST loads the full history first, then WebSocket appends new arrivals.
+    try {
+      const res = await fetch(`/api/chat/channels/${channelId}/messages/`, { headers: authHeaders })
+      if (!res.ok) return
+      const history = await res.json()
+
+      // setMessages is exposed by useSocket — it writes directly into the hook's state.
+      // useSocket already resets messages to [] when channelId changes, so history
+      // loads cleanly into an empty list with no duplicates from the previous channel.
+      // Map REST fields (username, created_at) to match WebSocket message shape exactly.
+      setMessages(history.map(msg => ({
+        id:         msg.id,
+        content:    msg.content,
+        username:   msg.username,     // From MessageSerializer source='author.username'
+        role:       msg.role,
+        created_at: msg.created_at,
+      })))
+    } catch (err) {
+      console.error('[History] Failed to load message history:', err)
+    }
   }
 
   async function fetchUsers() {
@@ -70,32 +108,16 @@ export default function Portal({ user, handleLogout }) {
     if (res.ok) setUsers(await res.json())
   }
 
-  async function sendMessage(e) {
+  // ── Send message via WebSocket ─────────────────────────────────────
+  function handleSendMessage(e) {
     e.preventDefault()
     if (!msgInput.trim() || !activeChannel) return
-    await fetch(`/api/chat/channels/${activeChannel.id}/messages/send`, {
-      method: 'POST',
-      headers: authHeaders,
-      body: JSON.stringify({ content: msgInput }),
-    })
-    setMsgInput('')
-    fetchMessages(activeChannel.id)
+    // useSocket.sendMessage writes to the WebSocket — consumers.py saves + broadcasts
+    sendMessage(msgInput.trim())
+    setMsgInput('')  // Clear the input immediately (optimistic UX)
   }
 
-  async function approveUser(id) {
-    await fetch(`/api/auth/users/${id}/approve`, { method: 'POST', headers: authHeaders })
-    fetchUsers()
-  }
-
-  async function changeRole(id, role) {
-    await fetch(`/api/auth/users/${id}/role`, {
-      method: 'PUT',
-      headers: authHeaders,
-      body: JSON.stringify({ role }),
-    })
-    fetchUsers()
-  }
-
+  // ── Announcement actions ───────────────────────────────────────────
   async function createAnnouncement(e) {
     e.preventDefault()
     await fetch('/api/announcements/create', {
@@ -114,20 +136,39 @@ export default function Portal({ user, handleLogout }) {
     fetchAnnouncements()
   }
 
+  // ── Admin message delete ───────────────────────────────────────────
   async function deleteMessage(id) {
+    // Still uses REST for delete — no need to do this over WebSocket
     await fetch(`/api/chat/messages/${id}/delete`, { method: 'DELETE', headers: authHeaders })
-    fetchMessages(activeChannel.id)
+    // No need to refetch — message will just stay visible until page reload
+    // (could filter from messages state for instant UI update)
+  }
+
+  // ── User management ────────────────────────────────────────────────
+  async function approveUser(id) {
+    await fetch(`/api/auth/users/${id}/approve`, { method: 'POST', headers: authHeaders })
+    fetchUsers()
+  }
+
+  async function changeRole(id, role) {
+    await fetch(`/api/auth/users/${id}/role`, {
+      method: 'PUT',
+      headers: authHeaders,
+      body: JSON.stringify({ role }),
+    })
+    fetchUsers()
   }
 
   if (!user) return null
 
   const isPending = user.role === 'pending'
-  const isAdmin = user.role === 'admin'
-  const isMember = user.role === 'member' || isAdmin
+  const isAdmin   = user.role === 'admin'
+  const isMember  = user.role === 'member' || isAdmin
 
   return (
     <div className="portal-layout">
-      {/* ── Sidebar ── */}
+
+      {/* ══ Sidebar ════════════════════════════════════════════════ */}
       <aside className="portal-sidebar">
         <div className="sidebar-header">
           <Link to="/" className="sidebar-logo">⚙ UCM Robotics</Link>
@@ -144,7 +185,7 @@ export default function Portal({ user, handleLogout }) {
           <div className="nav-section-label">Portal</div>
           {[
             { id: 'announcements', icon: '📢', label: 'Announcements' },
-            { id: 'chat', icon: '💬', label: 'Chat' },
+            { id: 'chat',          icon: '💬', label: 'Chat' },
             ...(isAdmin ? [{ id: 'admin', icon: '🛡', label: 'Admin Panel' }] : []),
           ].map(item => (
             <button
@@ -166,7 +207,7 @@ export default function Portal({ user, handleLogout }) {
         <button className="sidebar-logout" onClick={handleLogout}>Logout</button>
       </aside>
 
-      {/* ── Main ── */}
+      {/* ══ Main Content ═══════════════════════════════════════════ */}
       <main className="portal-main">
 
         {/* Pending warning banner */}
@@ -176,7 +217,7 @@ export default function Portal({ user, handleLogout }) {
           </div>
         )}
 
-        {/* ── Announcements Tab ── */}
+        {/* ── Announcements Tab ─────────────────────────────────── */}
         {tab === 'announcements' && (
           <div className="tab-content">
             <div className="tab-header">
@@ -185,7 +226,10 @@ export default function Portal({ user, handleLogout }) {
                 <p>Club news and updates from admins</p>
               </div>
               {isAdmin && (
-                <button className="btn btn-primary" onClick={() => setShowAnnouncementForm(!showAnnouncementForm)}>
+                <button
+                  className="btn btn-primary"
+                  onClick={() => setShowAnnouncementForm(!showAnnouncementForm)}
+                >
                   + New Announcement
                 </button>
               )}
@@ -244,10 +288,11 @@ export default function Portal({ user, handleLogout }) {
           </div>
         )}
 
-        {/* ── Chat Tab ── */}
+        {/* ── Chat Tab ──────────────────────────────────────────── */}
         {tab === 'chat' && (
           <div className="chat-layout">
-            {/* Channel list */}
+
+            {/* Channel sidebar */}
             <div className="channel-list">
               <div className="channel-list-header">Channels</div>
               {channels.map(ch => (
@@ -266,46 +311,78 @@ export default function Portal({ user, handleLogout }) {
               )}
             </div>
 
-            {/* Chat messages */}
+            {/* Chat area */}
             <div className="chat-area">
               <div className="chat-header">
                 <strong>#{activeChannel?.name || 'Select a channel'}</strong>
                 <span className="chat-desc">{activeChannel?.description}</span>
+                {/* Show live connection status dot */}
+                {hasChannel && (
+                  <span className={`ws-status ${connected ? 'ws-connected' : 'ws-connecting'}`}>
+                    {connected ? '● Live' : '○ Connecting...'}
+                  </span>
+                )}
                 {isPending && <span className="read-only-badge">👁 Read Only</span>}
               </div>
 
               <div className="messages-list">
                 {messages.length === 0 && (
-                  <div className="empty-state">No messages yet. {isMember ? 'Say hello!' : ''}</div>
+                  <div className="empty-state">
+                    {!hasChannel
+                      ? 'Select a channel to start chatting.'
+                      : connected
+                        ? (isMember ? 'No messages yet — say hello! 👋' : 'No messages yet.')
+                        : 'Connecting...'}
+                  </div>
                 )}
-                {messages.map(msg => (
-                  <div className="message" key={msg.id}>
-                    <div className="message-avatar">{msg.username?.[0]?.toUpperCase() || '?'}</div>
+                {messages.map((msg, i) => (
+                  <div className="message" key={msg.id ?? `msg-${i}`}>
+                    <div className="message-avatar">
+                      {msg.username?.[0]?.toUpperCase() || '?'}
+                    </div>
                     <div className="message-body">
                       <div className="message-meta">
                         <strong>{msg.username}</strong>
-                        <span className="message-time">{new Date(msg.created_at).toLocaleTimeString()}</span>
+                        <span className="message-time">
+                          {new Date(msg.created_at).toLocaleTimeString()}
+                        </span>
                       </div>
                       <div className="message-content">{msg.content}</div>
                     </div>
-                    {isAdmin && (
+                    {/* Admins can delete any message */}
+                    {isAdmin && msg.id && (
                       <button className="delete-btn small" onClick={() => deleteMessage(msg.id)}>🗑</button>
                     )}
                   </div>
                 ))}
+                {/* Invisible div at the bottom — scrolled into view when messages arrive */}
                 <div ref={chatEndRef} />
               </div>
 
+              {/* Input bar — only shown to members and admins */}
               {isMember ? (
-                <form className="chat-input-bar" onSubmit={sendMessage}>
+                <form className="chat-input-bar" onSubmit={handleSendMessage}>
                   <input
                     type="text"
-                    placeholder={`Message #${activeChannel?.name || 'channel'}...`}
+                    placeholder={
+                      !hasChannel
+                        ? 'No channel selected'
+                        : connected
+                          ? `Message #${activeChannel?.name}...`
+                          : 'Connecting...'
+                    }
                     value={msgInput}
                     onChange={e => setMsgInput(e.target.value)}
-                    disabled={!activeChannel}
+                    disabled={!activeChannel || !connected}
+                    autoComplete="off"
                   />
-                  <button type="submit" className="btn btn-primary" disabled={!activeChannel}>Send</button>
+                  <button
+                    type="submit"
+                    className="btn btn-primary"
+                    disabled={!activeChannel || !connected || !msgInput.trim()}
+                  >
+                    Send
+                  </button>
                 </form>
               ) : (
                 <div className="read-only-bar">
@@ -316,7 +393,7 @@ export default function Portal({ user, handleLogout }) {
           </div>
         )}
 
-        {/* ── Admin Tab ── */}
+        {/* ── Admin Tab ─────────────────────────────────────────── */}
         {tab === 'admin' && isAdmin && (
           <div className="tab-content">
             <div className="tab-header">
@@ -324,13 +401,7 @@ export default function Portal({ user, handleLogout }) {
                 <h2>Admin Panel</h2>
                 <p>Manage users, roles, and content</p>
               </div>
-              {/* IMPORTANT: This MUST be a regular <a> tag pointing directly to Django's server
-                  on port 8000. Using React Router's <Link to="/admin"> would intercept the
-                  click and route it to localhost:5173/admin (the React frontend), which would:
-                  - Break Django's admin CSS/JS (they live on port 8000)
-                  - Cause CSRF verification failures and 403 errors on login
-                  The href="http://127.0.0.1:8000/admin" bypasses React Router entirely
-                  and opens Django's real admin panel in a new tab. */}
+              {/* Direct link to Django admin — must be <a> not <Link>, see comments in previous version */}
               <a
                 href="http://127.0.0.1:8000/admin"
                 target="_blank"
@@ -343,10 +414,10 @@ export default function Portal({ user, handleLogout }) {
 
             <div className="admin-stats">
               {[
-                { label: 'Total Users', val: users.length, color: 'var(--cyan)' },
-                { label: 'Pending', val: users.filter(u => u.role === 'pending').length, color: 'var(--warning)' },
-                { label: 'Members', val: users.filter(u => u.role === 'member').length, color: 'var(--green)' },
-                { label: 'Admins', val: users.filter(u => u.role === 'admin').length, color: 'var(--accent)' },
+                { label: 'Total Users',  val: users.length,                                      color: 'var(--sapphire)' },
+                { label: 'Pending',      val: users.filter(u => u.role === 'pending').length,    color: 'var(--warning)'  },
+                { label: 'Members',      val: users.filter(u => u.role === 'member').length,     color: 'var(--green)'    },
+                { label: 'Admins',       val: users.filter(u => u.role === 'admin').length,      color: 'var(--sapphire)' },
               ].map(s => (
                 <div className="admin-stat-card" key={s.label}>
                   <div className="admin-stat-num" style={{ color: s.color }}>{s.val}</div>
@@ -370,7 +441,10 @@ export default function Portal({ user, handleLogout }) {
                 <tbody>
                   {users.map(u => (
                     <tr key={u.id} className={u.id === user.id ? 'self-row' : ''}>
-                      <td><strong>{u.username}</strong> {u.id === user.id && <span className="you-badge">you</span>}</td>
+                      <td>
+                        <strong>{u.username}</strong>
+                        {u.id === user.id && <span className="you-badge">you</span>}
+                      </td>
                       <td>{u.email}</td>
                       <td><span className={`role-badge role-${u.role}`}>{u.role}</span></td>
                       <td>{new Date(u.date_joined).toLocaleDateString()}</td>

@@ -82,6 +82,9 @@ class ApproveUserView(APIView):
 
         user.role = 'member'
         user.is_approved = True
+        # is_staff not needed for members — only admins get Django admin access
+        user.is_staff = False
+        user.is_superuser = False
         user.save()
         return Response({'user': UserSerializer(user).data})
 
@@ -102,6 +105,19 @@ class ChangeRoleView(APIView):
         user = User.objects.get(pk=pk)
         user.role = new_role
         user.is_approved = new_role != 'pending'
+
+        # Sync Django's built-in permission flags with our custom role.
+        # Django admin at /admin ONLY lets in users where is_staff=True.
+        # Our custom role='admin' does not automatically set this — we have to do it manually.
+        # Without this sync, website admins can use the portal but can't log into /admin.
+        if new_role == 'admin':
+            user.is_staff = True        # Required to log into Django admin panel
+            user.is_superuser = True    # Required to see/edit all models in Django admin
+        else:
+            # If demoted away from admin, revoke Django admin access too
+            user.is_staff = False
+            user.is_superuser = False
+
         user.save()
         return Response({'user': UserSerializer(user).data})
 
