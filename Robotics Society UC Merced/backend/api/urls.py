@@ -29,4 +29,6 @@ urlpatterns = [
     path('chat/channels/<int:channel_id>/messages/', views.MessageListView.as_view()),   # GET
     path('chat/channels/<int:channel_id>/messages/send', views.MessageCreateView.as_view()), # POST
     path('chat/messages/<int:pk>/delete', views.MessageDeleteView.as_view()), # DELETE
+    path('chat/messages/<int:pk>/react', views.ReactionToggleView.as_view()),    # POST — toggle reaction
+    path('chat/channels/<int:channel_id>/upload', views.FileUploadView.as_view()), # POST — upload file
 ]

@@ -138,6 +138,16 @@ import os
 
 STATIC_URL = '/static/'
 
+# MEDIA files — uploaded images/documents from chat file uploads
+# Files are stored in backend/media/ during development
+# For production, migrate to Cloudflare R2 or similar object storage
+import os
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+# Max upload size — 8MB (enforced in FileUploadView too)
+DATA_UPLOAD_MAX_MEMORY_SIZE = 8 * 1024 * 1024
+
 # STATIC_ROOT — collectstatic copies all static files here (Django admin CSS/JS etc).
 # WhiteNoise then serves them directly through daphne — no Nginx or separate static server needed.
 # Run once after any Django upgrade: python manage.py collectstatic

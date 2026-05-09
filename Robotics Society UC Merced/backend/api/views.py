@@ -8,10 +8,10 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken   # For generating JWT tokens
 from django.contrib.auth import get_user_model
-from .models import Announcement, Channel, Message
+from .models import Announcement, Channel, Message, Reaction
 from .serializers import (
     UserSerializer, RegisterSerializer,
-    AnnouncementSerializer, ChannelSerializer, MessageSerializer
+    AnnouncementSerializer, ChannelSerializer, MessageSerializer, ReactionSerializer
 )
 
 User = get_user_model()
@@ -194,3 +194,133 @@ class MessageDeleteView(APIView):
         message.is_deleted = True   # Soft delete — hides it but keeps it in the DB
         message.save()
         return Response({'message': 'Deleted'})
+
+# ─── Reactions ─────────────────────────────────────────────────────────────────
+
+class ReactionToggleView(APIView):
+    """POST /api/chat/messages/<id>/react — Toggle an emoji reaction on a message.
+    If the user has already reacted with this emoji, the reaction is removed.
+    If not, it is added. Returns the updated reaction list for the message.
+    """
+    permission_classes = [IsMember]   # Pending users cannot react
+
+    def post(self, request, pk):
+        emoji = request.data.get('emoji', '').strip()
+        if not emoji:
+            return Response({'error': 'emoji is required'}, status=400)
+
+        message = Message.objects.get(pk=pk)
+        # Try to get existing reaction — if found, delete it (toggle off)
+        existing = Reaction.objects.filter(message=message, user=request.user, emoji=emoji).first()
+        if existing:
+            existing.delete()
+        else:
+            Reaction.objects.create(message=message, user=request.user, emoji=emoji)
+
+        # Build updated reaction list
+        reactions = ReactionSerializer(message.reactions.all(), many=True).data
+
+        # Broadcast the reaction update to ALL WebSocket clients in the channel
+        # so other users see the new/removed reaction instantly without refreshing.
+        from channels.layers import get_channel_layer
+        from asgiref.sync import async_to_sync
+
+        channel_layer = get_channel_layer()
+        group_name = f'chat_{message.channel_id}'
+
+        async_to_sync(channel_layer.group_send)(
+            group_name,
+            {
+                'type': 'reaction_update',       # Handled by new handler in consumers.py
+                'message_id': message.id,
+                'reactions':  reactions,
+            }
+        )
+
+        return Response({'reactions': reactions})
+
+
+# ─── File Upload ───────────────────────────────────────────────────────────────
+
+class FileUploadView(APIView):
+    """POST /api/chat/channels/<channel_id>/upload — Upload a file and create a message.
+    Accepts multipart/form-data with a 'file' field.
+    Saves the file to MEDIA_ROOT and creates a Message with the file URL.
+    Max file size: 8MB (enforced here + in settings via DATA_UPLOAD_MAX_MEMORY_SIZE).
+    """
+    permission_classes = [IsMember]
+
+    def post(self, request, channel_id):
+        import os
+        from django.conf import settings
+        from django.core.files.storage import default_storage
+
+        uploaded = request.FILES.get('file')
+        if not uploaded:
+            return Response({'error': 'No file provided'}, status=400)
+
+        # Enforce 8MB size limit — reasonable for free hosting
+        max_bytes = 8 * 1024 * 1024
+        if uploaded.size > max_bytes:
+            return Response({'error': 'File too large. Maximum size is 8MB.'}, status=400)
+
+        # Determine file type category for frontend rendering decisions
+        content_type = uploaded.content_type or ''
+        if content_type.startswith('image/'):
+            file_type = 'image'
+        elif content_type == 'application/pdf':
+            file_type = 'pdf'
+        else:
+            file_type = 'document'
+
+        # Save to media/chat_uploads/channel_X/ — clean structure for future cloud migration
+        channel_dir = f'chat_uploads/channel_{channel_id}/'
+        save_path = default_storage.save(
+            channel_dir + uploaded.name,
+            uploaded
+        )
+        # Store as a clean relative URL: /media/chat_uploads/channel_1/foo.png
+        # The frontend will prefix this with the Django server base URL (API_BASE).
+        # Storing relative paths (not full URLs) makes cloud storage migration easier later —
+        # just change the prefix, not all stored records.
+        file_url = settings.MEDIA_URL + save_path
+
+        # Create a Message record linking to the file
+        channel = Channel.objects.get(pk=channel_id)
+        message = Message.objects.create(
+            content='',            # No text content for file messages
+            author=request.user,
+            channel=channel,
+            file_url=file_url,
+            file_name=uploaded.name,
+            file_type=file_type,
+        )
+
+        # Broadcast the file message to all WebSocket clients in this channel.
+        # Without this, other users would need to refresh to see the uploaded file.
+        # We import channel layer here lazily (same pattern as consumers.py).
+        from channels.layers import get_channel_layer
+        from asgiref.sync import async_to_sync
+        import json
+
+        serialized = MessageSerializer(message).data
+        channel_layer = get_channel_layer()
+        group_name = f'chat_{channel_id}'
+
+        async_to_sync(channel_layer.group_send)(
+            group_name,
+            {
+                'type': 'chat_message',
+                'id':        serialized['id'],
+                'content':   serialized['content'],
+                'username':  request.user.username,
+                'role':      request.user.role,
+                'created_at':serialized['created_at'],
+                'file_url':  serialized['file_url'],
+                'file_name': serialized['file_name'],
+                'file_type': serialized['file_type'],
+                'reactions': [],
+            }
+        )
+
+        return Response(serialized, status=201)

@@ -2,7 +2,7 @@
 
 from rest_framework import serializers
 from django.contrib.auth import get_user_model
-from .models import Announcement, Channel, Message
+from .models import Announcement, Channel, Message, Reaction
 
 User = get_user_model()   # Gets our custom User model
 
@@ -66,16 +66,32 @@ class AnnouncementSerializer(serializers.ModelSerializer):
         read_only_fields = ['id', 'author_name', 'created_at', 'updated_at']
 
 
-class MessageSerializer(serializers.ModelSerializer):
-    """Serializes chat messages with author info."""
+class ReactionSerializer(serializers.ModelSerializer):
+    """Serializes a single reaction — used inside MessageSerializer."""
+    username = serializers.CharField(source='user.username', read_only=True)
 
-    username = serializers.CharField(source='author.username', read_only=True)
-    role = serializers.CharField(source='author.role', read_only=True)
+    class Meta:
+        model = Reaction
+        fields = ['id', 'emoji', 'username']
+        read_only_fields = ['id', 'username']
+
+
+class MessageSerializer(serializers.ModelSerializer):
+    """Serializes chat messages with author info, reactions, and file attachments."""
+    username  = serializers.CharField(source='author.username', read_only=True)
+    role      = serializers.CharField(source='author.role', read_only=True)
+    # Nested reactions — returns list of {id, emoji, username} objects
+    reactions = ReactionSerializer(many=True, read_only=True)
 
     class Meta:
         model = Message
-        fields = ['id', 'content', 'username', 'role', 'channel', 'created_at']
-        read_only_fields = ['id', 'username', 'role', 'created_at']
+        fields = [
+            'id', 'content', 'username', 'role', 'channel',
+            'file_url', 'file_name', 'file_type',   # File attachment fields
+            'reactions',                              # Emoji reactions
+            'created_at',
+        ]
+        read_only_fields = ['id', 'username', 'role', 'created_at', 'reactions']
 
 
 class ChannelSerializer(serializers.ModelSerializer):

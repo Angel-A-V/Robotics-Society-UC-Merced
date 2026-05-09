@@ -76,12 +76,41 @@ class ChatConsumer(AsyncWebsocketConsumer):
           4. Broadcast it to everyone in the group (including the sender)
         """
         data = json.loads(text_data)
+        msg_type = data.get('type', 'message')  # Default to 'message' if no type field
+
+        # ── Handle typing indicators FIRST — before any content checks ──────────
+        # CRITICAL: typing events have empty content intentionally.
+        # The old code had "if not content: return" which silently dropped all
+        # typing events before they could be processed. Now we check type first.
+        if msg_type == 'typing':
+            await self.channel_layer.group_send(
+                self.group_name,
+                {
+                    'type': 'typing_indicator',
+                    'username': self.user.username,
+                    'action': 'start',
+                }
+            )
+            return
+
+        if msg_type == 'typing_stop':
+            await self.channel_layer.group_send(
+                self.group_name,
+                {
+                    'type': 'typing_indicator',
+                    'username': self.user.username,
+                    'action': 'stop',
+                }
+            )
+            return
+
+        # ── Regular chat message from here down ─────────────────────────────────
         content = data.get('content', '').strip()
 
         if not content:
-            return  # Ignore empty messages
+            return  # Ignore empty messages (not typing events — those are handled above)
 
-        # Pending users cannot send — enforce the same rule as the REST API
+        # Pending users cannot send messages
         if self.user.role == 'pending':
             await self.send(text_data=json.dumps({
                 'error': 'Your account is pending approval. You cannot send messages yet.'
@@ -101,6 +130,10 @@ class ChatConsumer(AsyncWebsocketConsumer):
                 'username': self.user.username,
                 'role': self.user.role,
                 'created_at': message.created_at.isoformat(),
+                'file_url':   message.file_url,
+                'file_name':  message.file_name,
+                'file_type':  message.file_type,
+                'reactions':  [],   # New messages start with no reactions
             }
         )
 
@@ -112,11 +145,41 @@ class ChatConsumer(AsyncWebsocketConsumer):
         This is what makes the message appear instantly for everyone.
         """
         await self.send(text_data=json.dumps({
-            'id':         event['id'],
-            'content':    event['content'],
-            'username':   event['username'],
-            'role':       event['role'],
-            'created_at': event['created_at'],
+            'type':      'message',
+            'id':        event['id'],
+            'content':   event['content'],
+            'username':  event['username'],
+            'role':      event['role'],
+            'created_at':event['created_at'],
+            'file_url':  event.get('file_url'),
+            'file_name': event.get('file_name'),
+            'file_type': event.get('file_type'),
+            'reactions': event.get('reactions', []),
+        }))
+
+    async def reaction_update(self, event):
+        """Broadcast reaction changes to all connected clients in the channel group.
+        Called when any user adds or removes a reaction via the REST API.
+        The frontend updates that specific message's reactions in place.
+        """
+        await self.send(text_data=json.dumps({
+            'type':       'reaction_update',
+            'message_id': event['message_id'],
+            'reactions':  event['reactions'],
+        }))
+
+    async def typing_indicator(self, event):
+        """Broadcast typing start/stop to all users EXCEPT the one typing.
+        Lightweight — not saved to DB, just forwarded over WebSocket.
+        action='start' → add to typing list
+        action='stop'  → remove from typing list immediately
+        """
+        # Never send back to the person who triggered it — they already know they're typing
+        if event['username'] == self.user.username:
+            return
+        await self.send(text_data=json.dumps({
+            'type':     'typing' if event.get('action') == 'start' else 'typing_stop',
+            'username': event['username'],
         }))
 
     # ── Database helpers ──────────────────────────────────────────────
