@@ -265,6 +265,7 @@ export default function Home({ user, handleLogout }) {
         <p>University of California, Merced · School of Engineering</p>
         <div className="footer-links">
           <a href="/" onClick={(e) => { e.preventDefault(); window.scrollTo({ top: 0, behavior: 'smooth' }) }}>Home</a>
+          <Link to="/contact">Contact</Link>
           <Link to="/login">Login</Link>
           <Link to="/register">Join</Link>
         </div>

@@ -7,6 +7,7 @@ import ProjectRobotArm from './pages/ProjectRobotArm'
 import Login from './pages/Login'
 import Register from './pages/Register'
 import Portal from './pages/Portal'
+import Contact from './pages/Contact'
 import './index.css'
 
 // ScrollToTop scrolls window to 0 on every route change UNLESS there's a hash (like #projects)
@@ -67,7 +68,8 @@ export default function App() {
         <Route path="/projects/robot-arm" element={<ProjectRobotArm user={user} handleLogout={handleLogout} />} />
         <Route path="/login" element={<Login setUser={setUser} />} />
         <Route path="/register" element={<Register setUser={setUser} />} />
-        <Route path="/portal" element={<Portal user={user} handleLogout={handleLogout} />} />
+        <Route path="/portal" element={<Portal user={user} setUser={setUser} handleLogout={handleLogout} />} />
+        <Route path="/contact" element={<Contact user={user} handleLogout={handleLogout} />} />
       </Routes>
     </Router>
   )

@@ -31,4 +31,11 @@ urlpatterns = [
     path('chat/messages/<int:pk>/delete', views.MessageDeleteView.as_view()), # DELETE
     path('chat/messages/<int:pk>/react', views.ReactionToggleView.as_view()),    # POST — toggle reaction
     path('chat/channels/<int:channel_id>/upload', views.FileUploadView.as_view()), # POST — upload file
+    path('chat/channels/create', views.ChannelCreateView.as_view()),     # POST — create channel (admin)
+    path('chat/channels/<int:pk>/delete', views.ChannelDeleteView.as_view()), # DELETE — delete channel (admin)
+
+    # ── Profile ──
+    path('auth/profile', views.ProfileUpdateView.as_view()),              # PUT  — update bio
+    path('auth/profile/avatar', views.ProfileAvatarView.as_view()),       # POST — upload avatar
+    path('auth/profile/<str:username>', views.PublicProfileView.as_view()),# GET  — public profile
 ]

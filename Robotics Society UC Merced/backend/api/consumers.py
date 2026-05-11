@@ -121,19 +121,23 @@ class ChatConsumer(AsyncWebsocketConsumer):
         message = await self.save_message(content)
 
         # Broadcast to the entire group — every connected browser gets this
+        # avatar_url MUST be included here — without it, WebSocket messages arrive
+        # without an avatar, causing the photo to flicker on/off as history (REST)
+        # and live messages (WebSocket) alternate with and without the avatar field.
         await self.channel_layer.group_send(
             self.group_name,
             {
-                'type': 'chat_message',           # Must match the method name below
-                'id': message.id,
-                'content': message.content,
-                'username': self.user.username,
-                'role': self.user.role,
+                'type':       'chat_message',
+                'id':         message.id,
+                'content':    message.content,
+                'username':   self.user.username,
+                'role':       self.user.role,
+                'avatar_url': self.user.avatar_url,   # ← the missing piece
                 'created_at': message.created_at.isoformat(),
                 'file_url':   message.file_url,
                 'file_name':  message.file_name,
                 'file_type':  message.file_type,
-                'reactions':  [],   # New messages start with no reactions
+                'reactions':  [],
             }
         )
 
@@ -145,16 +149,17 @@ class ChatConsumer(AsyncWebsocketConsumer):
         This is what makes the message appear instantly for everyone.
         """
         await self.send(text_data=json.dumps({
-            'type':      'message',
-            'id':        event['id'],
-            'content':   event['content'],
-            'username':  event['username'],
-            'role':      event['role'],
-            'created_at':event['created_at'],
-            'file_url':  event.get('file_url'),
-            'file_name': event.get('file_name'),
-            'file_type': event.get('file_type'),
-            'reactions': event.get('reactions', []),
+            'type':       'message',
+            'id':         event['id'],
+            'content':    event['content'],
+            'username':   event['username'],
+            'role':       event['role'],
+            'avatar_url': event.get('avatar_url'),   # ← pass through to browser
+            'created_at': event['created_at'],
+            'file_url':   event.get('file_url'),
+            'file_name':  event.get('file_name'),
+            'file_type':  event.get('file_type'),
+            'reactions':  event.get('reactions', []),
         }))
 
     async def reaction_update(self, event):

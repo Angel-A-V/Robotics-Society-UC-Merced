@@ -61,6 +61,7 @@ export default function Navbar({ user, handleLogout }) {
         <li><a href="/#projects" onClick={handleProjectsClick}>Projects</a></li>
         <li><a href="/#team" onClick={handleHashClick('#team')}>Team</a></li>
         <li><a href="/#about" onClick={handleHashClick('#about')}>About</a></li>
+        <li><Link to="/contact">Contact</Link></li>
       </ul>
 
       {/* ── Desktop actions ── */}
@@ -97,6 +98,7 @@ export default function Navbar({ user, handleLogout }) {
           <a href="/#projects" onClick={handleProjectsClick} className="mobile-link">Projects</a>
           <a href="/#team" onClick={handleHashClick('#team')} className="mobile-link">Team</a>
           <a href="/#about" onClick={handleHashClick('#about')} className="mobile-link">About</a>
+          <Link to="/contact" className="mobile-link" onClick={() => setMenuOpen(false)}>Contact</Link>
           <div className="mobile-divider" />
           {user ? (
             <>

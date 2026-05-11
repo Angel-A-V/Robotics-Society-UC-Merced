@@ -12,8 +12,8 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ['id', 'username', 'email', 'role', 'is_approved', 'date_joined', 'last_login']
-        read_only_fields = ['id', 'date_joined', 'last_login']  # These can't be set via API
+        fields = ['id', 'username', 'email', 'role', 'is_approved', 'date_joined', 'last_login', 'avatar_url', 'bio']
+        read_only_fields = ['id', 'date_joined', 'last_login']
 
 
 class RegisterSerializer(serializers.ModelSerializer):
@@ -78,20 +78,21 @@ class ReactionSerializer(serializers.ModelSerializer):
 
 class MessageSerializer(serializers.ModelSerializer):
     """Serializes chat messages with author info, reactions, and file attachments."""
-    username  = serializers.CharField(source='author.username', read_only=True)
-    role      = serializers.CharField(source='author.role', read_only=True)
+    username   = serializers.CharField(source='author.username', read_only=True)
+    role       = serializers.CharField(source='author.role', read_only=True)
+    avatar_url = serializers.CharField(source='author.avatar_url', read_only=True, allow_null=True)
     # Nested reactions — returns list of {id, emoji, username} objects
     reactions = ReactionSerializer(many=True, read_only=True)
 
     class Meta:
         model = Message
         fields = [
-            'id', 'content', 'username', 'role', 'channel',
+            'id', 'content', 'username', 'role', 'avatar_url', 'channel',
             'file_url', 'file_name', 'file_type',   # File attachment fields
             'reactions',                              # Emoji reactions
             'created_at',
         ]
-        read_only_fields = ['id', 'username', 'role', 'created_at', 'reactions']
+        read_only_fields = ['id', 'username', 'role', 'avatar_url', 'created_at', 'reactions']
 
 
 class ChannelSerializer(serializers.ModelSerializer):

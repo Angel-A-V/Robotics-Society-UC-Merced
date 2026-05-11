@@ -310,17 +310,141 @@ class FileUploadView(APIView):
         async_to_sync(channel_layer.group_send)(
             group_name,
             {
-                'type': 'chat_message',
-                'id':        serialized['id'],
-                'content':   serialized['content'],
-                'username':  request.user.username,
-                'role':      request.user.role,
-                'created_at':serialized['created_at'],
-                'file_url':  serialized['file_url'],
-                'file_name': serialized['file_name'],
-                'file_type': serialized['file_type'],
-                'reactions': [],
+                'type':       'chat_message',
+                'id':         serialized['id'],
+                'content':    serialized['content'],
+                'username':   request.user.username,
+                'role':       request.user.role,
+                'avatar_url': request.user.avatar_url,   # ← include avatar in file uploads too
+                'created_at': serialized['created_at'],
+                'file_url':   serialized['file_url'],
+                'file_name':  serialized['file_name'],
+                'file_type':  serialized['file_type'],
+                'reactions':  [],
             }
         )
 
         return Response(serialized, status=201)
+
+# ─── Profile Views ─────────────────────────────────────────────────────────────
+
+class ProfileUpdateView(APIView):
+    """PUT /api/auth/profile — Update the logged-in user's bio.
+    Avatar upload is handled separately by ProfileAvatarView.
+    """
+    permission_classes = [permissions.IsAuthenticated]
+
+    def put(self, request):
+        user = request.user
+        bio = request.data.get('bio', user.bio)
+
+        # Cap bio at 300 chars
+        user.bio = bio[:300]
+        user.save()
+        return Response(UserSerializer(user).data)
+
+
+class ProfileAvatarView(APIView):
+    """POST /api/auth/profile/avatar — Upload a profile picture.
+    Accepts multipart/form-data with a 'avatar' image file (max 4MB).
+    Stores file in media/avatars/ and saves the relative URL on the user.
+    """
+    permission_classes = [permissions.IsAuthenticated]
+
+    def post(self, request):
+        import os
+        from django.conf import settings
+        from django.core.files.storage import default_storage
+
+        uploaded = request.FILES.get('avatar')
+        if not uploaded:
+            return Response({'error': 'No file provided'}, status=400)
+
+        # Avatar size limit — smaller than chat uploads since it's profile art
+        max_bytes = 4 * 1024 * 1024
+        if uploaded.size > max_bytes:
+            return Response({'error': 'Avatar too large. Maximum size is 4MB.'}, status=400)
+
+        # Only allow image types for avatars
+        allowed_types = ['image/jpeg', 'image/png', 'image/gif', 'image/webp']
+        if uploaded.content_type not in allowed_types:
+            return Response({'error': 'Only JPG, PNG, GIF, or WebP images are allowed.'}, status=400)
+
+        # Save to media/avatars/user_<id>_<filename>
+        ext = uploaded.name.rsplit('.', 1)[-1].lower()
+        safe_name = f'user_{request.user.id}.{ext}'
+        save_path = default_storage.save(f'avatars/{safe_name}', uploaded)
+        avatar_url = settings.MEDIA_URL + save_path
+
+        request.user.avatar_url = avatar_url
+        request.user.save()
+
+        return Response({'avatar_url': avatar_url})
+
+
+class PublicProfileView(APIView):
+    """GET /api/auth/profile/<username> — Get public profile info for any user.
+    Used when clicking a username in chat to view their profile modal.
+    Returns safe public fields only — never email or sensitive data.
+    """
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request, username):
+        try:
+            target = User.objects.get(username=username)
+        except User.DoesNotExist:
+            return Response({'error': 'User not found'}, status=404)
+
+        return Response({
+            'id':         target.id,
+            'username':   target.username,
+            'role':       target.role,
+            'bio':        target.bio,
+            'avatar_url': target.avatar_url,
+            'date_joined': target.date_joined,
+        })
+
+
+# ─── Channel Management (Admin only) ──────────────────────────────────────────
+
+class ChannelCreateView(APIView):
+    """POST /api/chat/channels/create — Create a new chat channel.
+    Admin only. Body: { name, description }
+    Name is slugified automatically (spaces → hyphens, lowercase).
+    """
+    permission_classes = [IsAdmin]
+
+    def post(self, request):
+        import re
+        name = request.data.get('name', '').strip()
+        description = request.data.get('description', '').strip()
+
+        if not name:
+            return Response({'error': 'Channel name is required.'}, status=400)
+
+        # Sanitize: lowercase, replace spaces/special chars with hyphens
+        slug = re.sub(r'[^a-z0-9-]', '-', name.lower()).strip('-')
+        slug = re.sub(r'-+', '-', slug)   # collapse multiple hyphens
+
+        if Channel.objects.filter(name=slug).exists():
+            return Response({'error': f'A channel named #{slug} already exists.'}, status=400)
+
+        channel = Channel.objects.create(name=slug, description=description)
+        return Response(ChannelSerializer(channel).data, status=201)
+
+
+class ChannelDeleteView(APIView):
+    """DELETE /api/chat/channels/<id>/delete — Delete a channel and all its messages.
+    Admin only. This is permanent — use with care.
+    """
+    permission_classes = [IsAdmin]
+
+    def delete(self, request, pk):
+        try:
+            channel = Channel.objects.get(pk=pk)
+        except Channel.DoesNotExist:
+            return Response({'error': 'Channel not found.'}, status=404)
+
+        name = channel.name
+        channel.delete()   # Cascades to messages via on_delete=CASCADE in Message model
+        return Response({'deleted': name})

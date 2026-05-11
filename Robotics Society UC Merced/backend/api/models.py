@@ -25,6 +25,12 @@ class User(AbstractUser):
 
     is_approved = models.BooleanField(default=False)  # Admins flip this to True to approve users
 
+    # ── Profile fields ─────────────────────────────────────────────────────────
+    # avatar_url: relative path like /media/avatars/user_1.png — None uses initials fallback in frontend
+    avatar_url = models.CharField(max_length=500, blank=True, null=True)
+    # bio: short personal description shown on the profile modal
+    bio = models.TextField(max_length=300, blank=True, default='')
+
     # Convenience properties — makes code more readable elsewhere
     @property
     def is_admin(self):
