@@ -6,26 +6,17 @@ export default function Register({ setUser }) {
   const [error, setError] = useState('')
   const [success, setSuccess] = useState(false)
   const [loading, setLoading] = useState(false)
+  const [showPassword, setShowPassword] = useState(false)
+  const [showConfirm, setShowConfirm] = useState(false)
   const navigate = useNavigate()
 
   const handleSubmit = async (e) => {
     e.preventDefault()
     setError('')
-
-    // Basic client-side validation before even hitting the server
-    if (form.password !== form.confirm) {
-      setError('Passwords do not match')
-      return
-    }
-    if (form.password.length < 8) {
-      setError('Password must be at least 8 characters')
-      return
-    }
-
+    if (form.password !== form.confirm) { setError('Passwords do not match'); return }
+    if (form.password.length < 8) { setError('Password must be at least 8 characters'); return }
     setLoading(true)
-
     try {
-      // Hit our custom register endpoint in api/views.py RegisterView
       const res = await fetch('/api/auth/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -33,28 +24,19 @@ export default function Register({ setUser }) {
           username: form.username,
           email: form.email,
           password: form.password,
-          confirm_password: form.confirm,  // Django serializer checks these match too
+          confirm_password: form.confirm,
         }),
       })
-
       const data = await res.json()
-
       if (!res.ok) {
-        // Django returns field-level errors as objects e.g. { username: ["already taken"] }
-        // This flattens them into a single readable string
         const messages = Object.values(data).flat().join(' ')
         setError(messages || 'Registration failed')
         return
       }
-
-      // Registration returns tokens immediately — store them just like login does
       localStorage.setItem('access_token', data.access)
       localStorage.setItem('refresh_token', data.refresh)
-
-      // Save user to React state
       setUser(data.user)
       setSuccess(true)
-
     } catch (err) {
       setError('Network error — is the Django server running on port 8000?')
     } finally {
@@ -62,11 +44,11 @@ export default function Register({ setUser }) {
     }
   }
 
-  // Show this screen after successful registration instead of redirecting immediately
-  // so the user understands they're in pending state
   if (success) {
     return (
       <div className="auth-page">
+        <div className="auth-orb auth-orb-1" />
+        <div className="auth-orb auth-orb-2" />
         <div className="auth-card" style={{ textAlign: 'center' }}>
           <div style={{ fontSize: 48, marginBottom: 20 }}>✓</div>
           <h2 style={{ marginBottom: 12 }}>Account Created!</h2>
@@ -96,6 +78,8 @@ export default function Register({ setUser }) {
 
   return (
     <div className="auth-page">
+      <div className="auth-orb auth-orb-1" />
+      <div className="auth-orb auth-orb-2" />
       <div className="auth-card">
         <Link to="/" className="auth-logo" style={{ textDecoration: 'none' }}>
           <div className="logo-icon">⚙</div>
@@ -135,23 +119,45 @@ export default function Register({ setUser }) {
           </div>
           <div className="form-group">
             <label>Password</label>
-            <input
-              type="password"
-              placeholder="Min. 8 characters"
-              value={form.password}
-              onChange={e => setForm({ ...form, password: e.target.value })}
-              required
-            />
+            <div className="password-input-wrap">
+              <input
+                type={showPassword ? 'text' : 'password'}
+                placeholder="Min. 8 characters"
+                value={form.password}
+                onChange={e => setForm({ ...form, password: e.target.value })}
+                required
+              />
+              <button
+                type="button"
+                className="password-toggle-btn"
+                onClick={() => setShowPassword(v => !v)}
+                tabIndex={-1}
+                aria-label={showPassword ? 'Hide password' : 'Show password'}
+              >
+                {showPassword ? <i className="fi fi-sr-eye"></i> : <i className="fi fi-sr-eye-crossed"></i>}
+              </button>
+            </div>
           </div>
           <div className="form-group">
             <label>Confirm Password</label>
-            <input
-              type="password"
-              placeholder="••••••••"
-              value={form.confirm}
-              onChange={e => setForm({ ...form, confirm: e.target.value })}
-              required
-            />
+            <div className="password-input-wrap">
+              <input
+                type={showConfirm ? 'text' : 'password'}
+                placeholder="••••••••"
+                value={form.confirm}
+                onChange={e => setForm({ ...form, confirm: e.target.value })}
+                required
+              />
+              <button
+                type="button"
+                className="password-toggle-btn"
+                onClick={() => setShowConfirm(v => !v)}
+                tabIndex={-1}
+                aria-label={showConfirm ? 'Hide password' : 'Show password'}
+              >
+                {showConfirm ? <i className="fi fi-sr-eye"></i> : <i className="fi fi-sr-eye-crossed"></i>}
+              </button>
+            </div>
           </div>
 
           <button

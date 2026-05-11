@@ -1,72 +1,73 @@
 import { Link, useLocation, useNavigate } from 'react-router-dom'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import rblogo from './assets/rblogo.jpg'
 
-// handleLogout now comes from App.jsx — it clears localStorage and resets user state
 export default function Navbar({ user, handleLogout }) {
   const location = useLocation()
   const navigate = useNavigate()
-  const [menuOpen, setMenuOpen] = useState(false)  // Mobile hamburger state
-
+  const [menuOpen, setMenuOpen] = useState(false)
+  const [activeSection, setActiveSection] = useState('home')
 
   const isHome = location.pathname === '/'
 
-  // Clicking "Home" always scrolls to top of homepage
+  useEffect(() => {
+    if (!isHome) { setActiveSection(''); return }
+    const sections = ['projects', 'team', 'about']
+    const observers = []
+    const handleScroll = () => { if (window.scrollY < 200) setActiveSection('home') }
+    window.addEventListener('scroll', handleScroll, { passive: true })
+    sections.forEach(id => {
+      const el = document.getElementById(id)
+      if (!el) return
+      const obs = new IntersectionObserver(
+        ([entry]) => { if (entry.isIntersecting) setActiveSection(id) },
+        { rootMargin: '-30% 0px -60% 0px', threshold: 0 }
+      )
+      obs.observe(el)
+      observers.push(obs)
+    })
+    return () => { window.removeEventListener('scroll', handleScroll); observers.forEach(o => o.disconnect()) }
+  }, [isHome])
+
   const handleHomeClick = (e) => {
-    e.preventDefault()
-    setMenuOpen(false)
-    if (isHome) {
-      window.scrollTo({ top: 0, behavior: 'smooth' })
-    } else {
-      navigate('/')
-    }
+    e.preventDefault(); setMenuOpen(false)
+    if (isHome) { window.scrollTo({ top: 0, behavior: 'smooth' }) } else { navigate('/') }
   }
-
-  // Clicking "Projects" goes to #projects section on homepage
   const handleProjectsClick = (e) => {
-    e.preventDefault()
-    setMenuOpen(false)
-    if (isHome) {
-      // Already on homepage — just scroll to #projects
-      const el = document.querySelector('#projects')
-      if (el) el.scrollIntoView({ behavior: 'smooth' })
-    } else {
-      // On a different page — navigate to homepage then scroll
-      navigate('/#projects')
-    }
+    e.preventDefault(); setMenuOpen(false)
+    if (isHome) { document.querySelector('#projects')?.scrollIntoView({ behavior: 'smooth' }) } else { navigate('/#projects') }
+  }
+  const handleHashClick = (hash) => (e) => {
+    e.preventDefault(); setMenuOpen(false)
+    if (isHome) { document.querySelector(hash)?.scrollIntoView({ behavior: 'smooth' }) } else { navigate(`/${hash}`) }
   }
 
-  const handleHashClick = (hash) => (e) => {
-    e.preventDefault()
-    setMenuOpen(false)
-    if (isHome) {
-      const el = document.querySelector(hash)
-      if (el) el.scrollIntoView({ behavior: 'smooth' })
-    } else {
-      navigate(`/${hash}`)
-    }
+  const isContact = location.pathname === '/contact'
+  const isProjectPage = location.pathname.startsWith('/projects/')
+
+  const getLinkClass = (section) => {
+    if (section === 'contact') return isContact ? 'nav-active' : ''
+    if (section === 'projects' && isProjectPage) return 'nav-active'
+    if (!isHome && section !== 'contact') return ''
+    return activeSection === section ? 'nav-active' : ''
   }
 
   return (
     <nav className="main-nav">
-      {/* ── Logo with real club image ── */}
       <a href="/" onClick={handleHomeClick} className="nav-logo">
         <img src={rblogo} alt="RS Logo" className="nav-logo-img" />
         <span>UC Merced <span className="accent">Robotics</span></span>
       </a>
 
-      {/* ── Desktop nav links ── */}
       <ul className="nav-links">
-        <li><a href="/" onClick={handleHomeClick}>Home</a></li>
-        <li><a href="/#projects" onClick={handleProjectsClick}>Projects</a></li>
-        <li><a href="/#team" onClick={handleHashClick('#team')}>Team</a></li>
-        <li><a href="/#about" onClick={handleHashClick('#about')}>About</a></li>
-        <li><Link to="/contact">Contact</Link></li>
+        <li><a href="/" onClick={handleHomeClick} className={getLinkClass('home')}>Home</a></li>
+        <li><a href="/#projects" onClick={handleProjectsClick} className={getLinkClass('projects')}>Projects</a></li>
+        <li><a href="/#team" onClick={handleHashClick('#team')} className={getLinkClass('team')}>Team</a></li>
+        <li><a href="/#about" onClick={handleHashClick('#about')} className={getLinkClass('about')}>About</a></li>
+        <li><Link to="/contact" className={getLinkClass('contact')}>Contact</Link></li>
       </ul>
 
-      {/* ── Desktop actions ── */}
       <div className="nav-actions">
-
         {user ? (
           <>
             <Link to="/portal" className="btn btn-outline">Portal</Link>
@@ -80,18 +81,12 @@ export default function Navbar({ user, handleLogout }) {
         )}
       </div>
 
-      {/* ── Mobile hamburger button ── */}
-      <button
-        className="hamburger"
-        onClick={() => setMenuOpen(!menuOpen)}
-        aria-label="Toggle menu"
-      >
+      <button className="hamburger" onClick={() => setMenuOpen(!menuOpen)} aria-label="Toggle menu">
         <span className={`ham-line ${menuOpen ? 'open' : ''}`} />
         <span className={`ham-line ${menuOpen ? 'open' : ''}`} />
         <span className={`ham-line ${menuOpen ? 'open' : ''}`} />
       </button>
 
-      {/* ── Mobile dropdown menu ── */}
       {menuOpen && (
         <div className="mobile-menu">
           <a href="/" onClick={handleHomeClick} className="mobile-link">Home</a>

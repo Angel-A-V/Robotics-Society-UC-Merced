@@ -1,11 +1,10 @@
 // Contact.jsx — Contact, Sponsorship & Collaboration page
-// A professional-facing page for sponsors, companies, and organizations.
 
 import Navbar from '../Navbar'
 import { Link } from 'react-router-dom'
 import rblogo from '../assets/rblogo.jpg'
+import asucmLogo from '../assets/asucm-logo.png'
 
-// ── Contact cards data ────────────────────────────────────────────────────────
 const CONTACT_CARDS = [
   {
     icon: '🤝',
@@ -45,12 +44,6 @@ const SOCIAL_LINKS = [
   { icon: '📸', label: 'Instagram', handle: '@ucm_robotics', href: 'https://instagram.com/ucm_robotics' },
   { icon: '💼', label: 'LinkedIn', handle: 'UCM Robotics Society', href: 'https://linkedin.com' },
   { icon: '🐙', label: 'GitHub', handle: 'Angel-A-V', href: 'https://github.com/Angel-A-V/Robotics-Society-UC-Merced' },
-]
-
-const SPONSORS_PLACEHOLDER = [
-  { name: 'Your Company Here', tier: 'Gold Sponsor' },
-  { name: 'Your Company Here', tier: 'Silver Sponsor' },
-  { name: 'Your Company Here', tier: 'Bronze Sponsor' },
 ]
 
 export default function Contact({ user, handleLogout }) {
@@ -144,7 +137,6 @@ export default function Contact({ user, handleLogout }) {
               </div>
             </div>
 
-            {/* Social links */}
             <div className="contact-socials">
               {SOCIAL_LINKS.map(s => (
                 <a key={s.label} href={s.href} target="_blank" rel="noopener noreferrer"
@@ -159,67 +151,97 @@ export default function Contact({ user, handleLogout }) {
             </div>
           </div>
 
-          {/* Sponsorship tiers */}
+          {/* ── Our Sponsors box ── */}
           <div className="sponsorship-tiers">
-            <h3 style={{ marginBottom: 20, color: 'var(--text-h)' }}>Sponsorship Tiers</h3>
+            <h3 style={{ marginBottom: 20, color: 'var(--text-h)' }}>Our Sponsors</h3>
+            <p style={{ color: 'var(--text)', fontSize: 14, marginBottom: 24, lineHeight: 1.6 }}>
+              We're proud to be supported by organizations that believe in student-led engineering.
+            </p>
 
-            <div className="tier-card tier-gold">
-              <div className="tier-icon">🥇</div>
-              <div className="tier-info">
-                <div className="tier-name">Gold Sponsor</div>
-                <div className="tier-perks">Logo on website · Recognition at events · Priority recruiting access · Dedicated thank-you post</div>
+            {/* ASUCM sponsor card */}
+            <div className="sponsor-feature-card">
+              <div className="sponsor-feature-logo">
+                <img src={asucmLogo} alt="ASUCM" className="sponsor-feature-img" />
+              </div>
+              <div className="sponsor-feature-info">
+                <div className="sponsor-feature-name">ASUCM</div>
+                <div className="sponsor-feature-full">Associated Students of the University of California, Merced</div>
+                <div className="sponsor-feature-desc">
+                  Official student government sponsor providing funding and resources to support our robotics programs and competitions.
+                </div>
               </div>
             </div>
 
-            <div className="tier-card tier-silver">
-              <div className="tier-icon">🥈</div>
-              <div className="tier-info">
-                <div className="tier-name">Silver Sponsor</div>
-                <div className="tier-perks">Logo on website · Recognition at events · Recruiting access</div>
-              </div>
+            <div className="sponsor-cta-inline">
+              <p style={{ color: 'var(--text)', fontSize: 13, marginBottom: 12 }}>
+                Interested in sponsoring UCM Robotics Society?
+              </p>
+              <a href="mailto:robotics@ucmerced.edu?subject=Sponsorship Inquiry"
+                className="btn btn-primary full-width">
+                Inquire About Sponsorship →
+              </a>
             </div>
-
-            <div className="tier-card tier-bronze">
-              <div className="tier-icon">🥉</div>
-              <div className="tier-info">
-                <div className="tier-name">Bronze Sponsor</div>
-                <div className="tier-perks">Name on website · Recognition at events</div>
-              </div>
-            </div>
-
-            <a href="mailto:robotics@ucmerced.edu?subject=Sponsorship Inquiry"
-              className="btn btn-primary full-width" style={{ marginTop: 20 }}>
-              Inquire About Sponsorship →
-            </a>
           </div>
         </div>
       </section>
 
-      {/* ── Current Sponsors ── */}
-      <section className="section" id="sponsors">
-        <div className="section-label">Our Supporters</div>
-        <h2 className="section-title">Current Sponsors</h2>
-        <p className="section-sub">We're grateful for the organizations that make our work possible</p>
+      {/* ── MESA Labs Map ── */}
+      <section className="section" id="location">
+        <div className="section-label">Where We Work</div>
+        <h2 className="section-title">MESA Labs</h2>
+        <p className="section-sub">
+          The majority of our projects are run from MESA Labs at 4225 Hospital Road, Atwater, CA
+        </p>
 
-        <div className="sponsors-grid">
-          {SPONSORS_PLACEHOLDER.map((s, i) => (
-            <div className="sponsor-placeholder" key={i}>
-              <div className="sponsor-placeholder-inner">
-                <div className="sponsor-placeholder-icon">🏢</div>
-                <div className="sponsor-placeholder-name">{s.name}</div>
-                <div className="sponsor-placeholder-tier">{s.tier}</div>
+        <div className="mesa-map-container">
+          <div className="mesa-map-info">
+            <div className="mesa-info-badge">📍 Primary Lab Location</div>
+            <h3 className="mesa-info-title">MESA Labs</h3>
+            <div className="mesa-info-details">
+              <div className="mesa-info-row">
+                <span className="mesa-info-icon">🏢</span>
+                <div>
+                  <div className="mesa-info-label">Address</div>
+                  <div className="mesa-info-value">4225 Hospital Road<br />Atwater, CA 95301</div>
+                </div>
+              </div>
+              <div className="mesa-info-row">
+                <span className="mesa-info-icon">⚙️</span>
+                <div>
+                  <div className="mesa-info-label">Facility</div>
+                  <div className="mesa-info-value">Engineering Lab & Workshop</div>
+                </div>
+              </div>
+              <div className="mesa-info-row">
+                <span className="mesa-info-icon">🤖</span>
+                <div>
+                  <div className="mesa-info-label">Projects Run Here</div>
+                  <div className="mesa-info-value">BattleBots · Rally Cart · Robot Arm</div>
+                </div>
               </div>
             </div>
-          ))}
-          <div className="sponsor-placeholder sponsor-cta-card">
-            <div className="sponsor-placeholder-inner">
-              <div className="sponsor-placeholder-icon">➕</div>
-              <div className="sponsor-placeholder-name">Your Organization</div>
-              <a href="mailto:robotics@ucmerced.edu?subject=Sponsorship Inquiry"
-                className="btn btn-primary" style={{ marginTop: 12, fontSize: 13 }}>
-                Become a Sponsor
-              </a>
-            </div>
+            <a
+              href="https://maps.google.com/?q=4225+Hospital+Road,+Atwater,+CA+95301"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="btn btn-primary"
+              style={{ marginTop: 20 }}
+            >
+              📍 Open in Google Maps
+            </a>
+          </div>
+
+          <div className="mesa-map-embed">
+            <iframe
+              title="MESA Labs Location"
+              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3153.0!2d-120.6093!3d37.3582!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x80918b7a7e3b5555%3A0x0!2s4225+Hospital+Rd%2C+Atwater%2C+CA+95301!5e0!3m2!1sen!2sus!4v1680000000000"
+              width="100%"
+              height="100%"
+              style={{ border: 0, borderRadius: 12, minHeight: 320 }}
+              allowFullScreen=""
+              loading="lazy"
+              referrerPolicy="no-referrer-when-downgrade"
+            />
           </div>
         </div>
       </section>

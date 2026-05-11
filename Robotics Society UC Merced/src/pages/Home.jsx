@@ -166,7 +166,6 @@ export default function Home({ user, handleLogout }) {
         <p className="section-sub">Real robots. Real engineering. Real results.</p>
         <div className="projects-grid">
           {projects.map((p, i) => (
-            // Entire card is clickable — navigates to the project detail page
             <AnimatedCard
               className="project-card project-card-clickable"
               key={p.slug}
@@ -174,8 +173,10 @@ export default function Home({ user, handleLogout }) {
               onClick={() => navigate(`/projects/${p.slug}`)}
             >
               <div className="project-color-bar" style={{ background: p.color }} />
-              <div className="project-icon">{p.icon}</div>
-              <div className="project-status">{p.status}</div>
+              <div className="project-card-top">
+                <div className="project-icon">{p.icon}</div>
+                <div className="project-status">{p.status}</div>
+              </div>
               <h3>{p.title}</h3>
               <p>{p.desc}</p>
               <div className="tag-row">

@@ -624,11 +624,20 @@ export default function Portal({ user, setUser, handleLogout }) {
                   onChange={e => setAnnouncementForm({ ...announcementForm, title: e.target.value })} required />
                 <textarea placeholder="Content..." value={announcementForm.content} rows={4}
                   onChange={e => setAnnouncementForm({ ...announcementForm, content: e.target.value })} required />
-                <label className="checkbox-label">
-                  <input type="checkbox" checked={announcementForm.is_pinned}
-                    onChange={e => setAnnouncementForm({ ...announcementForm, is_pinned: e.target.checked })} />
-                  <i className="fi fi-rr-thumbtack"></i> Pin this
-                </label>
+                <button
+                  type="button"
+                  className={`pin-toggle-btn ${announcementForm.is_pinned ? 'active' : ''}`}
+                  onClick={() =>
+                    setAnnouncementForm({
+                      ...announcementForm,
+                      is_pinned: !announcementForm.is_pinned,
+                    })
+                  }
+                >
+                  <i className="fi fi-rr-thumbtack"></i>
+                  <span>{announcementForm.is_pinned ? 'Pinned' : 'Pin'}</span>
+                </button>
+
                 <div style={{ display: 'flex', gap: 12 }}>
                   <button type="submit" className="btn btn-primary">Post</button>
                   <button type="button" className="btn btn-outline" onClick={() => setShowAnnouncementForm(false)}>Cancel</button>
@@ -642,7 +651,7 @@ export default function Portal({ user, setUser, handleLogout }) {
                   {a.is_pinned && <div className="pin-badge"><i className="fi fi-rr-thumbtack"></i> Pinned</div>}
                   <div className="announcement-header">
                     <h3>{a.title}</h3>
-                    {isAdmin && <button className="delete-btn" onClick={() => deleteAnnouncement(a.id)}><i className="fi fi-rr-trash-xmark"></i></button>}
+                    {isAdmin && <button className="delete-btn" onClick={() => deleteAnnouncement(a.id)}><i className="fi fi-ss-trash"></i></button>}
                   </div>
                   <p>{a.content}</p>
                   <div className="announcement-meta">
