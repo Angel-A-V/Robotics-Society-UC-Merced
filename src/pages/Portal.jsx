@@ -6,7 +6,6 @@ import { Link, useNavigate } from 'react-router-dom'
 import { useSocket } from '../hooks/useSocket'
 import { API_BASE } from '../api'
 
-const API_BASE = 'http://127.0.0.1:8000'
 const RECOMMENDED_EMOJIS = ['❤️', '😭', '😂', '👍', '🤔', '🔥', '👏', '🤖', '💀', '🫡']
 const IMAGE_EXTS = ['png', 'jpg', 'jpeg', 'gif', 'webp', 'svg', 'bmp', 'avif']
 
