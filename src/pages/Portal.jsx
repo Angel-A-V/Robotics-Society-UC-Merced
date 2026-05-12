@@ -23,27 +23,28 @@ function groupMessages(messages) {
 }
 
 // ── Avatar helper — shows image if set, initials fallback otherwise ────────────
+// Always renders a <div> so React never swaps element types between messages,
+// which previously caused one user's photo to bleed onto another user's bubble.
 function Avatar({ avatarUrl, username, role, size = 38, onClick, className = '' }) {
+  const [imgError, setImgError] = React.useState(false)
   const fullUrl = avatarUrl
     ? (avatarUrl.startsWith('http') ? avatarUrl : `${API_BASE}${avatarUrl}`)
     : null
+  const showImg = fullUrl && !imgError
   const initial = username?.[0]?.toUpperCase() || '?'
   const style = { width: size, height: size, fontSize: size * 0.42, flexShrink: 0,
-                  borderRadius: '50%', cursor: onClick ? 'pointer' : 'default' }
+                  borderRadius: '50%', cursor: onClick ? 'pointer' : 'default',
+                  overflow: 'hidden', position: 'relative' }
 
-  if (fullUrl) {
-    return (
-      <img src={fullUrl} alt={username} className={`msg-avatar-img ${className}`}
-        style={style} onClick={onClick}
-        onError={e => { e.target.style.display = 'none'; e.target.nextSibling?.style.removeProperty('display') }}
-        title={username}
-      />
-    )
-  }
   return (
     <div className={`message-avatar avatar-${role} ${className}`} style={style} onClick={onClick} title={username}>
-      {initial}
-    </div>
+      {showImg
+        ? <img src={fullUrl} alt={username} className="msg-avatar-img"
+            style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '50%' }}
+            onError={() => setImgError(true)}
+          />
+        : initial
+      }</div>
   )
 }
 
@@ -953,7 +954,7 @@ export default function Portal({ user, setUser, handleLogout }) {
           <div className="tab-content">
             <div className="tab-header">
               <div><h2>Admin Panel</h2><p>Manage users, roles, and content</p></div>
-              <a href="http://127.0.0.1:8000/admin" target="_blank" rel="noopener noreferrer" className="btn btn-outline">Django Admin</a>
+              <a href={`${API_BASE}/admin/`} target="_blank" rel="noopener noreferrer" className="btn btn-outline">Django Admin</a>
             </div>
             <div className="admin-stats">
               {[
