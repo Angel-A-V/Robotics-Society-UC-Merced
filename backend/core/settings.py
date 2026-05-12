@@ -95,6 +95,8 @@ CORS_ALLOWED_ORIGIN_REGEXES = [
 CSRF_TRUSTED_ORIGINS = CORS_ALLOWED_ORIGINS + [
     "https://*.workers.dev",
     "https://*.pages.dev",
+    "https://*.railway.app",
+    "https://*.up.railway.app",
 ]
 CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOW_ALL_HEADERS = True
