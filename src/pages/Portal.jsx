@@ -769,7 +769,7 @@ export default function Portal({ user, setUser, handleLogout }) {
                     {!msg.grouped
                       ? <Avatar avatarUrl={msg.avatar_url} username={msg.username} role={msg.role}
                           size={38} onClick={() => setProfileModal(msg.username)} />
-                      : <div className="message-avatar-gap" />
+                      : <div className="message-avatar-gap" style={{ width: 38, height: 1, flexShrink: 0 }} />
                     }
 
                     <div className="message-body">

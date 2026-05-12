@@ -1230,7 +1230,7 @@ button { cursor: pointer; font-family: inherit; }
 .message:not(.message-grouped) { margin-top: 16px; }
 
 /* Same author within 5min — completely flush */
-.message-grouped { margin-top: 0; }
+.message-grouped { margin-top: 0; padding-top: 0; padding-bottom: 0; }
 
 /* Fade-in animation for new messages */
 @keyframes msgEnter {
