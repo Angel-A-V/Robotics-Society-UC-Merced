@@ -313,17 +313,28 @@ export default function Portal({ user, setUser, handleLogout }) {
   }, [user])
 
   // ── Background polling ──────────────────────────────────────────────────────
-  // Refresh non-chat data every 15s so the UI stays current without manual reloads.
+  // Refresh non-chat data periodically so the UI stays current without manual reloads.
   // Chat itself is real-time via WebSocket so it's not polled here.
+  // Pending users poll faster (5s) so their UI flips to "member" the moment an admin approves them.
   // Skips when the tab is hidden to save battery / API calls.
   useEffect(() => {
     if (!user) return
-    const POLL_MS = 15000
-    const tick = () => {
+    const POLL_MS = user.role === 'pending' ? 5000 : 5000
+    const tick = async () => {
       if (document.hidden) return
       fetchAnnouncements()
       fetchChannels()
       if (user.role === 'admin') fetchUsers()
+      // Re-fetch the current user so role changes (pending → member) propagate instantly.
+      try {
+        const res = await fetch(`${API_BASE}/api/auth/me`, { headers: authHeaders })
+        if (res.ok) {
+          const data = await res.json()
+          if (data?.user && (data.user.role !== user.role || data.user.avatar_url !== user.avatar_url)) {
+            setUser(data.user)
+          }
+        }
+      } catch { /* ignore network blips */ }
     }
     const id = setInterval(tick, POLL_MS)
     // Also refresh immediately when the tab regains focus (helps after laptop sleep)
