@@ -25,9 +25,16 @@ export function useSocket(channelId, token) {
   const connect = useCallback(() => {
     if (!channelId || !token) return
 
-    // Use wss:// on https pages, ws:// on http (important for Cloudflare)
-    const proto = window.location.protocol === 'https:' ? 'wss' : 'ws'
-    const wsUrl = `${proto}://${window.location.host}/ws/chat/${channelId}/?token=${token}`
+    // In production: use VITE_WS_URL (Railway backend)
+    // In development: use current host so Vite proxy handles /ws → localhost:8000
+    let wsUrl
+    const WS_BASE = import.meta.env.VITE_WS_URL || ''
+    if (WS_BASE) {
+      wsUrl = `${WS_BASE}/ws/chat/${channelId}/?token=${token}`
+    } else {
+      const proto = window.location.protocol === 'https:' ? 'wss' : 'ws'
+      wsUrl = `${proto}://${window.location.host}/ws/chat/${channelId}/?token=${token}`
+    }
     const ws = new WebSocket(wsUrl)
     wsRef.current = ws
 

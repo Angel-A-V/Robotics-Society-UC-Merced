@@ -10,6 +10,7 @@ import Register from './pages/Register'
 import Portal from './pages/Portal'
 import Contact from './pages/Contact'
 import './index.css'
+import { API_BASE } from './api'
 
 // ScrollToTop scrolls window to 0 on every route change UNLESS there's a hash (like #projects)
 // This fixes: clicking Home tab goes to top, clicking back from project goes to top
@@ -40,7 +41,7 @@ export default function App() {
     if (!token) return  // No token, nothing to do
 
     // Verify the token is still valid by hitting /api/auth/me
-    fetch('/api/auth/me', {
+    fetch(`${API_BASE}/api/auth/me`, {
       headers: { 'Authorization': `Bearer ${token}` }
     })
       .then(res => res.ok ? res.json() : null)

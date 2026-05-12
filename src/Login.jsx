@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
+import { API_BASE } from './api'
 
 export default function Login({ setUser }) {
   const [form, setForm] = useState({ username: '', password: '' })
@@ -13,7 +14,7 @@ export default function Login({ setUser }) {
     setError('')
     setLoading(true)
     try {
-      const res = await fetch('/api/auth/login', {
+      const res = await fetch(`${API_BASE}/api/auth/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username: form.username, password: form.password }),
@@ -25,7 +26,7 @@ export default function Login({ setUser }) {
       }
       localStorage.setItem('access_token', data.access)
       localStorage.setItem('refresh_token', data.refresh)
-      const meRes = await fetch('/api/auth/me', {
+      const meRes = await fetch(`${API_BASE}/api/auth/me`, {
         headers: { 'Authorization': `Bearer ${data.access}` }
       })
       const meData = await meRes.json()
