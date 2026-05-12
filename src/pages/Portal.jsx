@@ -312,6 +312,26 @@ export default function Portal({ user, setUser, handleLogout }) {
     setBio(user.bio || '')
   }, [user])
 
+  // ── Background polling ──────────────────────────────────────────────────────
+  // Refresh non-chat data every 15s so the UI stays current without manual reloads.
+  // Chat itself is real-time via WebSocket so it's not polled here.
+  // Skips when the tab is hidden to save battery / API calls.
+  useEffect(() => {
+    if (!user) return
+    const POLL_MS = 15000
+    const tick = () => {
+      if (document.hidden) return
+      fetchAnnouncements()
+      fetchChannels()
+      if (user.role === 'admin') fetchUsers()
+    }
+    const id = setInterval(tick, POLL_MS)
+    // Also refresh immediately when the tab regains focus (helps after laptop sleep)
+    const onVis = () => { if (!document.hidden) tick() }
+    document.addEventListener('visibilitychange', onVis)
+    return () => { clearInterval(id); document.removeEventListener('visibilitychange', onVis) }
+  }, [user])
+
   useEffect(() => {
     if (activeChannel) fetchMessageHistory(activeChannel.id)
   }, [activeChannel])
@@ -357,7 +377,9 @@ export default function Portal({ user, setUser, handleLogout }) {
     if (res.ok) {
       const data = await res.json()
       setChannels(data)
-      if (data.length > 0) setActiveChannel(data[0])
+      // Only auto-select first channel on initial load (when none is active yet).
+      // During background polling, preserve whatever the user is currently viewing.
+      setActiveChannel(prev => prev || (data.length > 0 ? data[0] : null))
     }
   }
   async function fetchMessageHistory(channelId) {
