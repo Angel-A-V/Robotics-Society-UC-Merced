@@ -4,6 +4,7 @@
 import { useState, useEffect, useLayoutEffect, useRef, useCallback } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useSocket } from '../hooks/useSocket'
+import { API_BASE } from '../api'
 
 const API_BASE = 'http://127.0.0.1:8000'
 const RECOMMENDED_EMOJIS = ['❤️', '😭', '😂', '👍', '🤔', '🔥', '👏', '🤖', '💀', '🫡']
@@ -71,7 +72,7 @@ function ProfileModal({ username, currentUserToken, onClose }) {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    fetch(`/api/auth/profile/${username}`, {
+    fetch(`${API_BASE}/api/auth/profile/${username}`, {
       headers: { Authorization: `Bearer ${currentUserToken}` }
     })
       .then(r => r.json())
@@ -348,11 +349,11 @@ export default function Portal({ user, setUser, handleLogout }) {
 
   // ── Fetchers ──────────────────────────────────────────────────────────────
   async function fetchAnnouncements() {
-    const res = await fetch('/api/announcements/', { headers: authHeaders })
+    const res = await fetch(`${API_BASE}/api/announcements/`, { headers: authHeaders })
     if (res.ok) setAnnouncements(await res.json())
   }
   async function fetchChannels() {
-    const res = await fetch('/api/chat/channels/', { headers: authHeaders })
+    const res = await fetch(`${API_BASE}/api/chat/channels/`, { headers: authHeaders })
     if (res.ok) {
       const data = await res.json()
       setChannels(data)
@@ -361,7 +362,7 @@ export default function Portal({ user, setUser, handleLogout }) {
   }
   async function fetchMessageHistory(channelId) {
     try {
-      const res = await fetch(`/api/chat/channels/${channelId}/messages/`, { headers: authHeaders })
+      const res = await fetch(`${API_BASE}/api/chat/channels/${channelId}/messages/`, { headers: authHeaders })
       if (!res.ok) return
       const history = await res.json()
       setMessages(history.map(msg => ({
@@ -373,7 +374,7 @@ export default function Portal({ user, setUser, handleLogout }) {
     } catch (err) { console.error('[History] Failed:', err) }
   }
   async function fetchUsers() {
-    const res = await fetch('/api/auth/users', { headers: authHeaders })
+    const res = await fetch(`${API_BASE}/api/auth/users`, { headers: authHeaders })
     if (res.ok) setUsers(await res.json())
   }
 
@@ -414,7 +415,7 @@ export default function Portal({ user, setUser, handleLogout }) {
     const formData = new FormData()
     formData.append('file', file)
     try {
-      const res = await fetch(`/api/chat/channels/${activeChannel.id}/upload`, {
+      const res = await fetch(`${API_BASE}/api/chat/channels/${activeChannel.id}/upload`, {
         method: 'POST', headers: { Authorization: `Bearer ${token}` }, body: formData,
       })
       if (!res.ok) { const err = await res.json(); setUploadError(err.error || 'Upload failed') }
@@ -427,7 +428,7 @@ export default function Portal({ user, setUser, handleLogout }) {
 
   // ── Reactions ─────────────────────────────────────────────────────────────
   async function handleReact(messageId, emoji) {
-    const res = await fetch(`/api/chat/messages/${messageId}/react`, {
+    const res = await fetch(`${API_BASE}/api/chat/messages/${messageId}/react`, {
       method: 'POST', headers: authHeaders, body: JSON.stringify({ emoji }),
     })
     if (res.ok) { const { reactions } = await res.json(); setMessages(prev => prev.map(m => m.id === messageId ? { ...m, reactions } : m)) }
@@ -443,13 +444,13 @@ export default function Portal({ user, setUser, handleLogout }) {
       if (avatarFile) {
         const fd = new FormData()
         fd.append('avatar', avatarFile)
-        const res = await fetch('/api/auth/profile/avatar', {
+        const res = await fetch(`${API_BASE}/api/auth/profile/avatar`, {
           method: 'POST', headers: { Authorization: `Bearer ${token}` }, body: fd,
         })
         if (!res.ok) { setProfileMsg('Avatar upload failed.'); setProfileSaving(false); return }
       }
       // 2. Save bio
-      const res = await fetch('/api/auth/profile', {
+      const res = await fetch(`${API_BASE}/api/auth/profile`, {
         method: 'PUT', headers: authHeaders, body: JSON.stringify({ bio }),
       })
       if (res.ok) {
@@ -458,7 +459,7 @@ export default function Portal({ user, setUser, handleLogout }) {
         // This is the single source of truth — every component that reads
         // user.avatar_url or user.bio immediately gets the new values,
         // eliminating the flicker caused by stale props vs local preview state.
-        const meRes = await fetch('/api/auth/me', {
+        const meRes = await fetch(`${API_BASE}/api/auth/me`, {
           headers: { Authorization: `Bearer ${token}` }
         })
         if (meRes.ok) {
@@ -485,20 +486,20 @@ export default function Portal({ user, setUser, handleLogout }) {
   // ── Announcements ─────────────────────────────────────────────────────────
   async function createAnnouncement(e) {
     e.preventDefault()
-    await fetch('/api/announcements/create', { method: 'POST', headers: authHeaders, body: JSON.stringify(announcementForm) })
+    await fetch(`${API_BASE}/api/announcements/create`, { method: 'POST', headers: authHeaders, body: JSON.stringify(announcementForm) })
     setAnnouncementForm({ title: '', content: '', is_pinned: false })
     setShowAnnouncementForm(false)
     fetchAnnouncements()
   }
   async function deleteAnnouncement(id) {
     if (!confirm('Delete this announcement?')) return
-    await fetch(`/api/announcements/${id}/`, { method: 'DELETE', headers: authHeaders })
+    await fetch(`${API_BASE}/api/announcements/${id}/`, { method: 'DELETE', headers: authHeaders })
     fetchAnnouncements()
   }
   async function deleteMessage(id, authorUsername) {
     if (user.username !== authorUsername && !isAdmin) return
     if (!confirm('Delete this message?')) return
-    await fetch(`/api/chat/messages/${id}/delete`, { method: 'DELETE', headers: authHeaders })
+    await fetch(`${API_BASE}/api/chat/messages/${id}/delete`, { method: 'DELETE', headers: authHeaders })
     setMessages(prev => prev.filter(m => m.id !== id))
   }
   // ── Channel management ──────────────────────────────────────────────────────
@@ -508,7 +509,7 @@ export default function Portal({ user, setUser, handleLogout }) {
     setChannelSaving(true)
     setChannelError('')
     try {
-      const res = await fetch('/api/chat/channels/create', {
+      const res = await fetch(`${API_BASE}/api/chat/channels/create`, {
         method: 'POST', headers: authHeaders,
         body: JSON.stringify({ name: newChannelName.trim(), description: newChannelDesc.trim() }),
       })
@@ -528,7 +529,7 @@ export default function Portal({ user, setUser, handleLogout }) {
 
   async function deleteChannel(channel) {
     if (!confirm(`Delete #${channel.name} and ALL its messages? This cannot be undone.`)) return
-    const res = await fetch(`/api/chat/channels/${channel.id}/delete`, {
+    const res = await fetch(`${API_BASE}/api/chat/channels/${channel.id}/delete`, {
       method: 'DELETE', headers: authHeaders,
     })
     if (res.ok) {
@@ -541,8 +542,8 @@ export default function Portal({ user, setUser, handleLogout }) {
     }
   }
 
-  async function approveUser(id) { await fetch(`/api/auth/users/${id}/approve`, { method: 'POST', headers: authHeaders }); fetchUsers() }
-  async function changeRole(id, role) { await fetch(`/api/auth/users/${id}/role`, { method: 'PUT', headers: authHeaders, body: JSON.stringify({ role }) }); fetchUsers() }
+  async function approveUser(id) { await fetch(`${API_BASE}/api/auth/users/${id}/approve`, { method: 'POST', headers: authHeaders }); fetchUsers() }
+  async function changeRole(id, role) { await fetch(`${API_BASE}/api/auth/users/${id}/role`, { method: 'PUT', headers: authHeaders, body: JSON.stringify({ role }) }); fetchUsers() }
 
   if (!user) return null
   const isPending = user.role === 'pending'
