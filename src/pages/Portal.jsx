@@ -26,7 +26,7 @@ function groupMessages(messages) {
 // Always renders a <div> so React never swaps element types between messages,
 // which previously caused one user's photo to bleed onto another user's bubble.
 function Avatar({ avatarUrl, username, role, size = 38, onClick, className = '' }) {
-  const [imgError, setImgError] = React.useState(false)
+  const [imgError, setImgError] = useState(false)
   const fullUrl = avatarUrl
     ? (avatarUrl.startsWith('http') ? avatarUrl : `${API_BASE}${avatarUrl}`)
     : null
