@@ -7,43 +7,43 @@ import asucmLogo from '../assets/asucm-logo.png'
 
 const CONTACT_CARDS = [
   {
-    icon: '🤝',
+    icon: <i className="fi fi-sr-handshake"></i>,
     title: 'Sponsorship',
     desc: 'Partner with UCM Robotics Society to support the next generation of engineers. Your sponsorship funds hardware, competition fees, and club operations.',
     cta: 'Become a Sponsor',
-    href: 'mailto:robotics@ucmerced.edu?subject=Sponsorship Inquiry — UCM Robotics Society',
+    href: 'mailto:nsamson@ucmerced.edu?subject=Sponsorship Inquiry — UCM Robotics Society',
     color: 'var(--sapphire)',
   },
   {
-    icon: '🔬',
+    icon: <i className="fi fi-sr-man-scientist"></i>,
     title: 'Research Collaboration',
     desc: 'Collaborate with our student teams on robotics research projects. We work across autonomous systems, computer vision, embedded control, and more.',
     cta: 'Start a Collaboration',
-    href: 'mailto:robotics@ucmerced.edu?subject=Research Collaboration — UCM Robotics Society',
+    href: 'mailto:nsamson@ucmerced.edu?subject=Research Collaboration — UCM Robotics Society',
     color: 'var(--green)',
   },
   {
-    icon: '🏢',
+    icon: <i className="fi fi-ss-industrial-pollution"></i>,
     title: 'Industry Partnership',
     desc: 'Connect with talented engineering students for internships, co-ops, and full-time opportunities. We can arrange site visits and career talks.',
     cta: 'Partner With Us',
-    href: 'mailto:robotics@ucmerced.edu?subject=Industry Partnership — UCM Robotics Society',
+    href: 'mailto:nsamson@ucmerced.edu?subject=Industry Partnership — UCM Robotics Society',
     color: 'var(--warning)',
   },
   {
-    icon: '📢',
+    icon: <i className="fi fi-sr-megaphone"></i>,
     title: 'Media & Outreach',
     desc: 'Interested in covering our work or featuring our team? We welcome press coverage, podcast appearances, and community outreach opportunities.',
     cta: 'Get in Touch',
-    href: 'mailto:robotics@ucmerced.edu?subject=Media Inquiry — UCM Robotics Society',
+    href: 'mailto:nsamson@ucmerced.edu?subject=Media Inquiry — UCM Robotics Society',
     color: '#a78bfa',
   },
 ]
 
 const SOCIAL_LINKS = [
-  { icon: '📸', label: 'Instagram', handle: '@ucm_robotics', href: 'https://instagram.com/ucm_robotics' },
-  { icon: '💼', label: 'LinkedIn', handle: 'UCM Robotics Society', href: 'https://linkedin.com' },
-  { icon: '🐙', label: 'GitHub', handle: 'Angel-A-V', href: 'https://github.com/Angel-A-V/Robotics-Society-UC-Merced' },
+  { icon: <i className="fi fi-brands-instagram"></i>, label: 'Instagram', handle: '@ucm_rs', href: 'https://instagram.com/ucm_rs' },
+  { icon: <i className="fi fi-brands-linkedin"></i>, label: 'LinkedIn', handle: 'N/A' },
+  { icon: <i className="fi fi-brands-github"></i>, label: 'GitHub', handle: 'Angel-A-V', href: 'https://github.com/Angel-A-V/Robotics-Society-UC-Merced' },
 ]
 
 export default function Contact({ user, handleLogout }) {
@@ -61,10 +61,10 @@ export default function Contact({ user, handleLogout }) {
           </h1>
           <p className="contact-hero-sub">
             Whether you're a company looking to sponsor, a researcher seeking collaboration,
-            or an organization interested in partnership — we'd love to hear from you.
+            or an organization interested in partnership, we'd love to hear from you.
           </p>
-          <a href="mailto:robotics@ucmerced.edu" className="btn btn-primary btn-lg">
-            📧 Contact Us Directly
+          <a href="mailto:nsamson@ucmerced.edu" className="btn btn-primary btn-lg">
+            <i className="fi fi-sr-envelope"></i> Contact Us Directly
           </a>
         </div>
         <div className="contact-hero-logo">
@@ -106,30 +106,30 @@ export default function Contact({ user, handleLogout }) {
 
             <div className="contact-info-list">
               <div className="contact-info-item">
-                <span className="contact-info-icon">📧</span>
+                <span className="contact-info-icon"><i className="fi fi-sr-circle-envelope"></i></span>
                 <div>
                   <div className="contact-info-label">General Inquiries</div>
-                  <a href="mailto:robotics@ucmerced.edu" className="contact-info-value">
-                    robotics@ucmerced.edu
+                  <a href="mailto:nsamson@ucmerced.edu" className="contact-info-value">
+                    nsamson@ucmerced.edu
                   </a>
                 </div>
               </div>
               <div className="contact-info-item">
-                <span className="contact-info-icon">🏫</span>
+                <span className="contact-info-icon"><i className="fi fi-sr-graduation-cap"></i></span>
                 <div>
                   <div className="contact-info-label">University</div>
                   <div className="contact-info-value">University of California, Merced</div>
                 </div>
               </div>
               <div className="contact-info-item">
-                <span className="contact-info-icon">🏗</span>
+                <span className="contact-info-icon"><i className="fi fi-sr-diploma"></i></span>
                 <div>
                   <div className="contact-info-label">School</div>
                   <div className="contact-info-value">School of Engineering</div>
                 </div>
               </div>
               <div className="contact-info-item">
-                <span className="contact-info-icon">📍</span>
+                <span className="contact-info-icon"><i className="fi fi-sr-map-marker"></i></span>
                 <div>
                   <div className="contact-info-label">Location</div>
                   <div className="contact-info-value">Merced, California 95343</div>
@@ -195,28 +195,28 @@ export default function Contact({ user, handleLogout }) {
 
         <div className="mesa-map-container">
           <div className="mesa-map-info">
-            <div className="mesa-info-badge">📍 Primary Lab Location</div>
+            <div className="mesa-info-badge"><i className="fi fi-sr-map-marker"></i> Primary Lab Location</div>
             <h3 className="mesa-info-title">MESA Labs</h3>
             <div className="mesa-info-details">
               <div className="mesa-info-row">
-                <span className="mesa-info-icon">🏢</span>
+                <span className="mesa-info-icon"><i className="fi fi-sr-house-building"></i></span>
                 <div>
                   <div className="mesa-info-label">Address</div>
                   <div className="mesa-info-value">4225 Hospital Road<br />Atwater, CA 95301</div>
                 </div>
               </div>
               <div className="mesa-info-row">
-                <span className="mesa-info-icon">⚙️</span>
+                <span className="mesa-info-icon"><i className="fi fi-sr-users-alt"></i></span>
                 <div>
                   <div className="mesa-info-label">Facility</div>
                   <div className="mesa-info-value">Engineering Lab & Workshop</div>
                 </div>
               </div>
               <div className="mesa-info-row">
-                <span className="mesa-info-icon">🤖</span>
+                <span className="mesa-info-icon"><i className="fi fi-sr-user-robot"></i></span>
                 <div>
                   <div className="mesa-info-label">Projects Run Here</div>
-                  <div className="mesa-info-value">BattleBots · Rally Cart · Robot Arm</div>
+                  <div className="mesa-info-value">BattleBots · Rally Kart · Robot Arm · Autonomous Robot</div>
                 </div>
               </div>
             </div>
@@ -227,7 +227,7 @@ export default function Contact({ user, handleLogout }) {
               className="btn btn-primary"
               style={{ marginTop: 20 }}
             >
-              📍 Open in Google Maps
+              <i className="fi fi-sr-marker"></i> Open in Google Maps
             </a>
           </div>
 

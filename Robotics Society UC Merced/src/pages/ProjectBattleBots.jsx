@@ -5,14 +5,12 @@ import Navbar from '../Navbar'
 function BackBtn() {
   const navigate = useNavigate()
   return (
-    <button
-      className="back-link"
-      onClick={() => navigate('/#projects')}
-    >
+    <button className="back-link" onClick={() => navigate('/#projects')}>
       ← All Projects
     </button>
   )
 }
+
 
 export default function ProjectBattleBots({ user, handleLogout }) {
   return (
@@ -21,18 +19,20 @@ export default function ProjectBattleBots({ user, handleLogout }) {
       <div className="project-hero-banner">
         <div className="project-hero-bg" style={{ background: 'linear-gradient(135deg, #1a0505 0%, #3d0a0a 50%, #1a0505 100%)' }} />
         <div className="project-hero-content">
-          <BackBtn />
-          <div className="project-badge" style={{ borderColor: '#DC1111', color: '#DC1111', background: 'rgba(220,17,17,0.1)' }}>Active Project</div>
+          <div className="project-hero-nav">
+            <BackBtn />
+            <div className="project-badge" style={{ borderColor: '#DC1111', color: '#DC1111', background: 'rgba(220,17,17,0.1)' }}>Waiting On INFO</div>
+          </div>
           <h1>BattleBots</h1>
-          <p>1lb and 12–15lb combat robots engineered to win</p>
+          <p>Information on this project has yet to be given unfortunately.</p>
           <div className="tech-tags">
-            {['CAD / SolidWorks', 'CNC Fabrication', 'ESC Control', 'LiPo Battery', 'Weapon Design'].map(t => (
+            {['N/A'].map(t => (
               <span className="tag" key={t}>{t}</span>
             ))}
           </div>
         </div>
         <div className="project-hero-visual">
-          <div className="project-icon-large">⚔️</div>
+          <div className="project-icon-large" style={{ alignSelf: "center" }}><i class="fi fi-sr-two-swords"></i></div>
         </div>
       </div>
 
@@ -40,18 +40,13 @@ export default function ProjectBattleBots({ user, handleLogout }) {
         <div className="project-section">
           <h2>Overview</h2>
           <p>
-            UCM Robotics fields combat robots in two weight classes: 1lb (Antweight) and 12–15lb (Beetleweight/Hobbyweight).
-            Our combat robotics team handles everything from CAD design and chassis fabrication to electronics integration
-            and competition strategy. We compete in regional events with the goal of advancing to national competitions.
-          </p>
+            Information on this project has yet to be given unfortunately.</p>
           <p style={{ marginTop: 16 }}>
-            Both bots are built from scratch by students — no off-the-shelf kits. The design process involves
-            stress analysis, weapon system engineering, drive train selection, and extensive testing before
-            any competition. If things break (they will), we fix them and come back stronger.
+          
           </p>
         </div>
 
-        <div className="project-section">
+        {/* <div className="project-section">
           <h2>Weight Classes</h2>
           <div className="arch-grid">
             {[
@@ -67,9 +62,9 @@ export default function ProjectBattleBots({ user, handleLogout }) {
               </div>
             ))}
           </div>
-        </div>
+        </div> */}
 
-        <div className="project-section">
+        {/* <div className="project-section">
           <h2>Build Timeline</h2>
           <div className="timeline">
             {[
@@ -89,9 +84,9 @@ export default function ProjectBattleBots({ user, handleLogout }) {
               </div>
             ))}
           </div>
-        </div>
+        </div> */}
 
-        <div className="project-section">
+        {/* <div className="project-section">
           <h2>Team</h2>
           <div className="team-grid-sm">
             {[
@@ -106,9 +101,9 @@ export default function ProjectBattleBots({ user, handleLogout }) {
               </div>
             ))}
           </div>
-        </div>
+        </div> */}
 
-        <div className="project-section">
+        {/* <div className="project-section">
           <h2>Demo</h2>
           <div className="video-placeholder">
             <div className="video-inner">
@@ -120,7 +115,7 @@ export default function ProjectBattleBots({ user, handleLogout }) {
 
         <div style={{ marginTop: 48, textAlign: 'center' }}>
           <BackBtn />
-        </div>
+        </div> */}
       </div>
     </div>
   )

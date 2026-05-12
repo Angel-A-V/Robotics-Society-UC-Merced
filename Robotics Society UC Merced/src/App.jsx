@@ -2,8 +2,9 @@ import { useState, useEffect } from 'react'
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom'
 import Home from './pages/Home'
 import ProjectBattleBots from './pages/ProjectBattleBots'
-import ProjectRallyCart from './pages/ProjectRallyCart'
+import ProjectRallyKart from './pages/ProjectRallyCart'
 import ProjectRobotArm from './pages/ProjectRobotArm'
+import ProjectAutonomousRobot from './pages/ProjectAutonomousRobot'
 import Login from './pages/Login'
 import Register from './pages/Register'
 import Portal from './pages/Portal'
@@ -64,8 +65,9 @@ export default function App() {
       <Routes>
         <Route path="/" element={<Home user={user} setUser={setUser} handleLogout={handleLogout} />} />
         <Route path="/projects/battlebots" element={<ProjectBattleBots user={user} handleLogout={handleLogout} />} />
-        <Route path="/projects/rally-cart" element={<ProjectRallyCart user={user} handleLogout={handleLogout} />} />
+        <Route path="/projects/rally-kart" element={<ProjectRallyKart user={user} handleLogout={handleLogout} />} />
         <Route path="/projects/robot-arm" element={<ProjectRobotArm user={user} handleLogout={handleLogout} />} />
+        <Route path="/projects/autonomous-robot" element={<ProjectAutonomousRobot user={user} handleLogout={handleLogout} />} />
         <Route path="/login" element={<Login setUser={setUser} />} />
         <Route path="/register" element={<Register setUser={setUser} />} />
         <Route path="/portal" element={<Portal user={user} setUser={setUser} handleLogout={handleLogout} />} />

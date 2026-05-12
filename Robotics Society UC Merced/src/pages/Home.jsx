@@ -10,34 +10,45 @@ import TonyPhoto from '../assets/team/Tony.png'
 import ParneethPhoto from '../assets/team/Parneeth.jpg'
 import WindyPhoto from '../assets/team/Windy.jpg'
 import AndrewPhoto from '../assets/team/Andrew.png'
+import RallyLogoCard from '../assets/logos/rally.png'
 
 const projects = [
   {
     slug: 'battlebots',
     title: 'BattleBots',
-    desc: 'Combat robots built for competition — we field both 1lb and 12–15lb weight class fighters engineered for maximum durability and drive performance.',
-    icon: '⚔️',
-    tags: ['CAD', 'Electronics', 'Fabrication'],
-    status: 'Active',
+    desc: 'Information on this project has yet to be given unfortunately.',
+    icon: <i class="fi fi-sr-two-swords"></i>,
+    tags: ['N/A'],
+    status: 'Waiting On INFO',
     color: '#DC1111',
   },
   {
-    slug: 'rally-cart',
-    title: 'Rally Cart',
-    desc: 'Placeholder',
-    icon: '🏎️',
-    tags: ['Embedded', 'Control Systems', 'CAN Bus'],
-    status: 'In Progress',
+    slug: 'rally-kart',
+    title: 'Rally Kart',
+    desc: 'A student-built single-seat rally platform featuring a custom tubular space-frame chassis, CAN bus electronics, custom dashboard, and a scalable drivetrain engineered for performance, safety, and future expandability.',
+    icon: null,
+    logoSrc: RallyLogoCard,
+    tags: ['Chassis Design', 'CAN Bus', 'Electronics'],
+    status: 'Active',
     color: '#f59e0b',
   },
   {
     slug: 'robot-arm',
-    title: 'Robot Arm (CSV)',
+    title: 'Robot Arm',
     desc: 'A computer vision-guided robotic arm that autonomously identifies, classifies, and sorts physical objects using a camera and machine learning pipeline.',
-    icon: '🦾',
-    tags: ['OpenCV', 'Servo Control', 'ML'],
-    status: 'Active',
+    icon: <i class="fi fi-rs-robotic-arm"></i>,
+    tags: ['OpenCV', 'Inverse Kinematics', 'Machine Learning', 'Servo Control', 'Raspberry Pi', 'Python'],
+    status: 'Pending Approval',
     color: '#10b981',
+  },
+  {
+    slug: 'autonomous-robot',
+    title: 'Autonomous Robot',
+    desc: 'A ground-based autonomous platform powered by ROS 2, CAN bus motors, and computer vision, capable of person detection, tracking, and autonomous navigation.',
+    icon: <i className="fi fi-sr-home-robot"></i>,
+    tags: ['ROS 2', 'CAN Bus', 'Vision / ML'],
+    status: 'Active',
+    color: '#3b82f6',
   },
 ]
 
@@ -132,15 +143,14 @@ export default function Home({ user, handleLogout }) {
             Tomorrow
           </h1>
           <p className="hero-sub">
-            We design, build, and program autonomous robots — from ground rovers to battle bots.
-            Join us and shape the future of robotics at UC Merced.
+              We design, engineer, and program advanced robotic systems ranging from autonomous platforms and intelligent robotic arms to high performance rally vehicles and combat robots. Join us and help shape the future of robotics at UC Merced.
           </p>
           <div className="hero-btns">
             <Link to="/register" className="btn btn-primary btn-lg">Join the Club →</Link>
             <a href="#projects" onClick={(e) => { e.preventDefault(); document.querySelector('#projects')?.scrollIntoView({ behavior: 'smooth' }) }} className="btn btn-outline btn-lg">View Projects</a>
           </div>
           <div className="hero-stats">
-            <div className="stat"><span className="stat-num">3</span><span className="stat-label">Active Projects</span></div>
+            <div className="stat"><span className="stat-num">4</span><span className="stat-label">Active Projects</span></div>
             <div className="stat-divider" />
             <div className="stat"><span className="stat-num">20+</span><span className="stat-label">Members</span></div>
             <div className="stat-divider" />
@@ -174,7 +184,11 @@ export default function Home({ user, handleLogout }) {
             >
               <div className="project-color-bar" style={{ background: p.color }} />
               <div className="project-card-top">
-                <div className="project-icon">{p.icon}</div>
+                <div className="project-icon">
+                  {p.logoSrc
+                    ? <img src={p.logoSrc} alt={p.title} className="card-rally-logo" />
+                    : p.icon}
+                </div>
                 <div className="project-status">{p.status}</div>
               </div>
               <h3>{p.title}</h3>
@@ -195,9 +209,8 @@ export default function Home({ user, handleLogout }) {
             <div className="section-label">About Us</div>
             <h2 className="section-title" style={{ textAlign: 'left' }}>We Are UCM Robotics</h2>
             <p style={{ color: 'var(--text)', lineHeight: 1.8, marginBottom: 20 }}>
-              Founded by students passionate about engineering, we compete, research, and build
-              real robots that solve real problems. Whether you write code, design circuits,
-              weld frames, or just want to learn — there's a place for you here.
+              UC Merced Robotics Society is a student driven engineering organization focused on designing advanced robotic systems, intelligent electronics, autonomous platforms, and high performance mechanical projects.
+              Our members collaborate across software, embedded systems, fabrication, artificial intelligence, and vehicle engineering to turn ambitious ideas into real working systems.
             </p>
             <p style={{ color: 'var(--text)', lineHeight: 1.8 }}>
               We meet weekly, collaborate across disciplines, and push the limits of what student
@@ -210,10 +223,10 @@ export default function Home({ user, handleLogout }) {
           </div>
           <div className="about-features">
             {[
-              { icon: '🧠', title: 'AI & Vision', desc: 'Computer vision, sensor fusion, and machine learning pipelines' },
-              { icon: '🔌', title: 'Hardware', desc: 'PCB design, motor controllers, actuators, and embedded systems' },
-              { icon: '⚔️', title: 'Combat Robotics', desc: '1lb and 12–15lb class BattleBots designed for competition' },
-              { icon: '🏆', title: 'Competitions', desc: 'We enter regional and national robotics competitions' },
+              { icon: <i className="fi fi-sr-brain-circuit"></i>, title: 'AI & Autonomy', desc: 'Computer vision, machine learning, autonomous navigation, and intelligent robotic control systems'},
+              { icon: <i className="fi fi-sr-microchip"></i>, title: 'Embedded Systems', desc: 'CAN bus architecture, ECU development, motor controllers, sensors, and custom electronics integration'},
+              { icon: <i className="fi fi-sr-car-mechanic"></i>, title: 'Mechanical Engineering', desc: 'CAD design, fabrication, suspension systems, drivetrain integration, and high performance robotic platforms'},
+              { icon: <i className="fi fi-sr-robot-money"></i>, title: 'Advanced Robotics Projects', desc: 'From autonomous robots and intelligent robotic arms to combat robotics and rally inspired vehicle platforms' },
             ].map(f => (
               <div className="feature-card" key={f.title}>
                 <div className="feature-icon">{f.icon}</div>
