@@ -27,11 +27,10 @@
   .hero-btns { justify-content: center; }
   .hero-stats { justify-content: center; }
   .hero-visual {
-    width: 200px;
-    height: 200px;
+    width: 300px;
+    height: 300px;
     margin-top: 32px;
   }
-  .hero-logo-img { width: 130px; height: 130px; }
 
   /* Sections */
   .section { padding: 56px 20px; }
