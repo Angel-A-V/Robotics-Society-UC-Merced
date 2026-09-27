@@ -45,11 +45,6 @@
   .about-inner { grid-template-columns: 1fr; gap: 36px; }
   .about-text .section-title { text-align: center; }
 
-  /* Team */
-  .team-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; } /* 2 cols = 3 rows of 2, all 6 fit */
-  /* On mobile, always show the info panel (no hover) */
-  .team-hover-info { position: static; transform: none; background: rgba(0,1,1,0.92); border-top: 1px solid var(--border); border-radius: 0; }
-
   /* CTA */
   .cta-section { padding: 56px 20px; }
   .cta-section h2 { font-size: 26px; }
@@ -75,7 +70,6 @@
 
 @media (max-width: 480px) {
   .hero-title { font-size: 32px; }
-  .team-grid { grid-template-columns: 1fr 1fr; } /* keeps 2-col on small phones */
   .hero-stats { gap: 0; flex-wrap: wrap; justify-content: center; }
   .stat-divider { margin: 0 16px; }
   .projects-grid { grid-template-columns: 1fr; }
