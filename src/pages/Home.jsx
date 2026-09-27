@@ -16,6 +16,7 @@ import Navbar from '../components/layout/Navbar'
 import Footer from '../components/layout/Footer'
 import AnimatedCard from '../components/ui/AnimatedCard'
 import Icon from '../components/ui/Icon'
+import TeamCarousel from '../components/ui/TeamCarousel'
 import { HERO, ABOUT_PARAGRAPHS, ABOUT_FEATURES } from '../data/site'
 import { PROJECTS } from '../data/projects'
 import { BOARD_MEMBERS } from '../data/team'
@@ -155,27 +156,13 @@ export default function Home({ user, handleLogout }) {
         </div>
       </section>
 
-      {/* ── Team ── the job and fact are revealed on hover ── */}
+      {/* ── Team ── swipeable carousel, details shown on the centred card ── */}
       <section className="section" id="team">
         <div className="section-label">The People</div>
         <h2 className="section-title">Meet the Board</h2>
         <p className="section-sub">The people keeping the gears turning</p>
 
-        <div className="team-grid">
-          {BOARD_MEMBERS.map((member, i) => (
-            <AnimatedCard className="team-card" key={member.name} delay={i * 60}>
-              <div className="team-photo-wrap">
-                <img src={member.photo} alt={member.name} className="team-photo" />
-              </div>
-              <strong className="team-name">{member.name}</strong>
-              <span className="team-role">{member.role}</span>
-              <div className="team-hover-info">
-                <p className="team-job">{member.job}</p>
-                <p className="team-fact">🎲 {member.fact}</p>
-              </div>
-            </AnimatedCard>
-          ))}
-        </div>
+        <TeamCarousel members={BOARD_MEMBERS} />
       </section>
 
       {/* ── Call to action ── */}

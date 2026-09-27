@@ -192,7 +192,7 @@ Robotics Society UC Merced/
 │   │
 │   ├── components/
 │   │   ├── layout/           # Navbar, Footer, ScrollToTop
-│   │   ├── ui/               # Avatar, Slideshow, Lightbox, PasswordField, …
+│   │   ├── ui/               # Avatar, Slideshow, TeamCarousel, Lightbox, …
 │   │   ├── project/          # Hero, SystemsGrid, Timeline, LeadsGrid, …
 │   │   └── portal/           # Sidebar, mobile tabs, ProfileModal
 │   │       ├── tabs/         # Announcements, Chat, Profile, Admin
@@ -228,7 +228,8 @@ leave `overrides.css` last.
 | The nav bar | `styles/components/navbar.css` |
 | A button | `styles/components/buttons.css` |
 | The footer | `styles/components/footer.css` |
-| The homepage (hero, cards, team) | `styles/pages/home.css` |
+| The homepage (hero, cards) | `styles/pages/home.css` |
+| The "Meet the Board" carousel | `styles/components/team-carousel.css` |
 | Login / register screens | `styles/pages/auth.css` |
 | A project page | `styles/pages/project-detail.css` |
 | The contact page | `styles/pages/contact.css` |

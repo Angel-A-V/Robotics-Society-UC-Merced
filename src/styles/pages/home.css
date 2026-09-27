@@ -1,5 +1,5 @@
 /* ── Home Page ───────────────────────────────────────────────────────
-   Hero, project cards, about/features, team grid and the closing CTA.
+   Hero, project cards, about/features, team carousel heading and the closing CTA.
    Markup: pages/Home.jsx
    ────────────────────────────────────────────────────────────────── */
 
@@ -259,90 +259,6 @@
   border-radius: 10px;
 }
 .feature-icon { font-size: 22px; flex-shrink: 0; margin-top: 2px; }
-
-/* ══════════════════════════════════════════════════════
-   TEAM SECTION — Real photos with hover reveal
-   ══════════════════════════════════════════════════════ */
-.team-grid {
-  display: grid;
-  /* 3 columns per row — 6 members fills 2 rows of 3, all centered and equal */
-  grid-template-columns: repeat(3, 1fr);
-  gap: 20px;
-  max-width: 900px;
-  margin: 0 auto;
-}
-.team-card {
-  background: var(--bg2);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-  transition: border-color 0.25s, transform 0.25s;
-  position: relative;
-}
-.team-card:hover {
-  border-color: var(--sapphire-glow);
-  transform: translateY(-4px);
-}
-.team-photo-wrap {
-  width: 100%;
-  aspect-ratio: 1;
-  overflow: hidden;
-  background: var(--graphite);
-}
-.team-photo {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: center center; /* center crop — works better for varied photo compositions */
-  transition: transform 0.4s ease;
-}
-.team-card:hover .team-photo { transform: scale(1.06); }
-.team-name {
-  display: block;
-  font-size: 15px;
-  color: var(--text-h);
-  font-weight: 600;
-  padding: 12px 12px 2px;
-}
-.team-role {
-  display: block;
-  font-size: 12px;
-  color: var(--sapphire);
-  font-family: var(--font);
-  letter-spacing: 0.5px;
-  padding-bottom: 12px;
-  padding-inline: 12px;
-}
-/* Info panel slides up on hover */
-.team-hover-info {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  background: rgba(0,1,1,0.96);
-  backdrop-filter: blur(8px);
-  border-top: 1px solid var(--sapphire-glow);
-  padding: 14px 14px 16px;
-  transform: translateY(100%);
-  transition: transform 0.3s ease;
-}
-.team-card:hover .team-hover-info { transform: translateY(0); }
-.team-job {
-  font-size: 12px;
-  color: var(--text-h);
-  line-height: 1.5;
-  margin-bottom: 8px;
-}
-.team-fact {
-  font-size: 11px;
-  color: var(--sapphire);
-  font-style: italic;
-  line-height: 1.4;
-}
 
 /* ══════════════════════════════════════════════════════
    CTA SECTION

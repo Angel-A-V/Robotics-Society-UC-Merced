@@ -1,11 +1,11 @@
 // ── Board Members ──────────────────────────────────────────────────────
-// The "Meet the Board" grid on the homepage.
+// The "Meet the Board" carousel on the homepage.
 //
 // To add a member: drop their photo in src/assets/team/, import it here,
-// and add an entry. The grid sizes itself — no CSS change needed.
+// and add an entry. The carousel sizes itself — no CSS change needed.
 //   role — their board position
 //   job  — what the position is responsible for
-//   fact — the fun fact revealed on hover
+//   fact — the fun fact shown on the centred card
 
 import NatePhoto     from '../assets/team/Nate.jpg'
 import TrevorPhoto   from '../assets/team/Trevor.jpg'
