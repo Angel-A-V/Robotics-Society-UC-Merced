@@ -17,6 +17,7 @@ import Footer from '../components/layout/Footer'
 import AnimatedCard from '../components/ui/AnimatedCard'
 import Icon from '../components/ui/Icon'
 import TeamCarousel from '../components/ui/TeamCarousel'
+import AsciiLogo from '../components/ui/ascii-logo/AsciiLogo'
 import { HERO, ABOUT_PARAGRAPHS, ABOUT_FEATURES } from '../data/site'
 import { PROJECTS } from '../data/projects'
 import { BOARD_MEMBERS } from '../data/team'
@@ -69,15 +70,9 @@ export default function Home({ user, handleLogout }) {
           </div>
         </div>
 
-        {/* Animated orbit rings around the club logo */}
+        {/* Interactive 3D ASCII rendering of the club logo */}
         <div className="hero-visual">
-          <div className="hero-orb" />
-          <div className="hero-ring ring1" />
-          <div className="hero-ring ring2" />
-          <div className="hero-ring ring3" />
-          <div className="hero-logo-wrap">
-            <img src={rblogo} alt="UCM Robotics Society" className="hero-logo-img" />
-          </div>
+          <AsciiLogo />
         </div>
       </section>
 
