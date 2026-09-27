@@ -1,0 +1,36 @@
+/* ── Section Shell ───────────────────────────────────────────────────
+   The repeating page-section wrapper: .section, .section-dark and the
+   label / title / subtitle heading stack. Shared by Home and Contact.
+   ────────────────────────────────────────────────────────────────── */
+
+/* ══════════════════════════════════════════════════════
+   SECTIONS
+   ══════════════════════════════════════════════════════ */
+.section {
+  padding: 96px 80px;
+  border-top: 1px solid var(--border);
+}
+.section-dark { background: var(--bg2); }
+.section-label {
+  font-family: var(--font);
+  font-size: 11px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--sapphire);
+  margin-bottom: 12px;
+  text-align: center;
+}
+.section-title {
+  font-size: 38px;
+  font-weight: 700;
+  color: var(--text-h);
+  margin: 0 0 10px;
+  letter-spacing: -1px;
+  text-align: center;
+}
+.section-sub {
+  color: var(--text);
+  text-align: center;
+  margin: 0 0 56px;
+  font-size: 16px;
+}

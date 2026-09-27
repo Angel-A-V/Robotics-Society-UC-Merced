@@ -1,8 +1,20 @@
-# models.py — defines your database tables
+# ── Models ────────────────────────────────────────────────────────────────────
+# The database tables. Four of them:
+#
+#   User          accounts, extends Django's built-in user with role + profile
+#   Announcement  club news posted by admins
+#   Channel       a chat room, e.g. #general
+#   Message       one chat message, optionally with a file attached
+#   Reaction      one emoji from one person on one message
+#
+# After changing anything here, run:
+#   python manage.py makemigrations && python manage.py migrate
 
 from django.db import models
 from django.contrib.auth.models import AbstractUser  # Django's built-in user with hashed passwords
 
+
+# ── User ──
 class User(AbstractUser):
     """
     Custom user model extending Django's built-in AbstractUser.
@@ -48,6 +60,7 @@ class User(AbstractUser):
         return f"{self.username} [{self.role}]"
 
 
+# ── Announcements ──
 class Announcement(models.Model):
     """Announcements created by admins, visible to all logged-in users."""
 
@@ -70,6 +83,7 @@ class Announcement(models.Model):
         return self.title
 
 
+# ── Channels ──
 class Channel(models.Model):
     """Chat channels (like Discord channels — e.g. #general, #projects)."""
 
@@ -81,6 +95,7 @@ class Channel(models.Model):
         return f"#{self.name}"
 
 
+# ── Messages ──
 class Message(models.Model):
     """A single chat message in a channel."""
 
@@ -111,6 +126,8 @@ class Message(models.Model):
     def __str__(self):
         return f"{self.author.username}: {self.content[:50]}"
 
+
+# ── Reactions ──
 class Reaction(models.Model):
     """Emoji reaction on a message — one record per user per emoji per message.
     Unique constraint prevents a user reacting with the same emoji twice.

@@ -1,50 +1,62 @@
-// src/hooks/useSocket.js
-// WebSocket hook — manages the real-time chat connection.
-// Features:
-//   - Auto-reconnect with exponential backoff (1s → 2s → 4s → 8s → max 30s)
-//   - Typing indicator support (send + receive)
-//   - Deduplication against REST-loaded history
-//   - Clean disconnect on channel switch or unmount
+// ── useSocket ──────────────────────────────────────────────────────────
+// Manages the real-time chat WebSocket for one channel.
+//
+// What it handles:
+//   - Connecting with the JWT token as a query parameter
+//   - Auto-reconnect with exponential backoff (1s → 2s → 4s → … → 30s)
+//   - Typing indicators, with a per-user expiry timer
+//   - De-duplicating live messages against the REST history
+//   - Reaction updates pushed from other users
+//   - A clean close when the channel changes or the component unmounts
+//
+// Server side: backend/api/consumers.py (ChatConsumer)
 
 import { useEffect, useRef, useState, useCallback } from 'react'
+import { WS_BASE, TYPING_TIMEOUT_MS } from '../lib/config'
+
+// Builds the ws:// or wss:// URL for a channel.
+// In production WS_BASE points at the deployed backend. In development it is
+// empty, so we connect to the Vite dev server host and let its proxy forward
+// /ws to Django (see vite.config.js).
+function buildSocketUrl(channelId, token) {
+  if (WS_BASE) return `${WS_BASE}/ws/chat/${channelId}/?token=${token}`
+  const protocol = window.location.protocol === 'https:' ? 'wss' : 'ws'
+  return `${protocol}://${window.location.host}/ws/chat/${channelId}/?token=${token}`
+}
 
 export function useSocket(channelId, token) {
-  const [messages,   setMessages]   = useState([])
-  const [connected,  setConnected]  = useState(false)
-  const [typingUsers, setTypingUsers] = useState([])  // ["angel", "xia.misu"]
-  const wsRef        = useRef(null)
-  const reconnectRef = useRef(null)   // Holds the reconnect setTimeout id
-  const typingTimers = useRef({})     // Per-user typing expiry timers { username: timeoutId }
-  const retryCount   = useRef(0)
-  const isMounted    = useRef(true)
+  const [messages, setMessages]       = useState([])
+  const [connected, setConnected]     = useState(false)
+  const [typingUsers, setTypingUsers] = useState([])   // ["angel", "xia.misu"]
 
-  // Expose setMessages so Portal can inject REST history
-  // hasChannel — drives "No channels yet" vs "Connecting..." in Portal UI
+  const socketRef    = useRef(null)
+  const reconnectRef = useRef(null)   // setTimeout id for the pending retry
+  const typingTimers = useRef({})     // { username: timeoutId }
+  const retryCount   = useRef(0)      // Drives the backoff delay
+  const isMounted    = useRef(true)   // Guards setState after unmount
+
+  // Lets the portal tell "no channels exist" apart from "still connecting".
   const hasChannel = Boolean(channelId)
 
   const connect = useCallback(() => {
     if (!channelId || !token) return
 
-    // Use wss:// on https pages, ws:// on http (important for Cloudflare)
-    const proto = window.location.protocol === 'https:' ? 'wss' : 'ws'
-    const wsUrl = `${proto}://${window.location.host}/ws/chat/${channelId}/?token=${token}`
-    const ws = new WebSocket(wsUrl)
-    wsRef.current = ws
+    const socket = new WebSocket(buildSocketUrl(channelId, token))
+    socketRef.current = socket
 
-    ws.onopen = () => {
+    socket.onopen = () => {
       if (!isMounted.current) return
       setConnected(true)
-      retryCount.current = 0   // Reset backoff on successful connect
+      retryCount.current = 0   // Reset the backoff after a successful connect
       console.log(`[WS] Connected to channel ${channelId}`)
     }
 
-    ws.onmessage = (event) => {
+    socket.onmessage = (event) => {
       if (!isMounted.current) return
       const data = JSON.parse(event.data)
 
-      // Route by message type
-      // Reaction update — another user added/removed a reaction
-      // Update that specific message's reactions in state without a full refetch
+      // ── Reaction added or removed by someone ──
+      // Patch that one message in place instead of refetching the channel.
       if (data.type === 'reaction_update') {
         setMessages(prev => prev.map(m =>
           m.id === data.message_id ? { ...m, reactions: data.reactions } : m
@@ -52,32 +64,25 @@ export function useSocket(channelId, token) {
         return
       }
 
+      // ── Someone started typing ──
+      // Each user gets their own expiry timer, reset by every new event from
+      // them. If nothing arrives within the timeout they drop off the list.
       if (data.type === 'typing') {
-        // Add user to typingUsers. Each incoming typing event resets THAT user's
-        // expiry timer to 4 seconds. If no new typing event comes within 4s,
-        // they are removed (they stopped typing or went idle).
-        const username = data.username
+        const { username } = data
+        setTypingUsers(prev => prev.includes(username) ? prev : [...prev, username])
 
-        setTypingUsers(prev => {
-          if (prev.includes(username)) return prev
-          return [...prev, username]
-        })
-
-        // Store per-user timeout so each user has their own independent timer
-        if (!typingTimers.current[username]) {
-          typingTimers.current[username] = null
-        }
         clearTimeout(typingTimers.current[username])
         typingTimers.current[username] = setTimeout(() => {
           setTypingUsers(prev => prev.filter(u => u !== username))
           delete typingTimers.current[username]
-        }, 4000)   // 4s — clears if user stops typing
+        }, TYPING_TIMEOUT_MS)
         return
       }
 
+      // ── Someone stopped typing ──
+      // Sent when they hit send or cleared the box, so clear immediately.
       if (data.type === 'typing_stop') {
-        // Immediate clear — user sent their message or explicitly stopped typing
-        const username = data.username
+        const { username } = data
         clearTimeout(typingTimers.current[username])
         delete typingTimers.current[username]
         setTypingUsers(prev => prev.filter(u => u !== username))
@@ -89,19 +94,21 @@ export function useSocket(channelId, token) {
         return
       }
 
-      // Regular message — deduplicate against REST history
+      // ── A normal chat message ──
+      // Skip it if the REST history already loaded this id.
       setMessages(prev => {
         if (data.id && prev.some(m => m.id === data.id)) return prev
         return [...prev, data]
       })
     }
 
-    ws.onclose = (event) => {
+    socket.onclose = (event) => {
       if (!isMounted.current) return
       setConnected(false)
       console.log(`[WS] Disconnected (code: ${event.code})`)
 
-      // Auto-reconnect unless it was a clean close (1000) or auth failure (4001)
+      // Reconnect unless this was a deliberate close (1000) or the server
+      // rejected our token (4001) — retrying a bad token would just loop.
       if (event.code !== 1000 && event.code !== 4001) {
         const delay = Math.min(1000 * 2 ** retryCount.current, 30000)
         retryCount.current++
@@ -110,20 +117,18 @@ export function useSocket(channelId, token) {
       }
     }
 
-    ws.onerror = () => {
-      setConnected(false)
-    }
+    socket.onerror = () => setConnected(false)
   }, [channelId, token])
 
+  // Open the socket, and re-open it whenever the channel changes.
   useEffect(() => {
     isMounted.current = true
     if (!channelId || !token) return
 
-    // Reset state when switching channels
+    // Clear everything belonging to the previous channel
     setMessages([])
     setConnected(false)
     setTypingUsers([])
-    // Clear all per-user typing timers from previous channel
     Object.values(typingTimers.current).forEach(clearTimeout)
     typingTimers.current = {}
     retryCount.current = 0
@@ -133,25 +138,26 @@ export function useSocket(channelId, token) {
     return () => {
       isMounted.current = false
       clearTimeout(reconnectRef.current)
-      if (wsRef.current) {
-        wsRef.current.onclose = null   // Prevent reconnect on intentional close
-        wsRef.current.close(1000)
+      if (socketRef.current) {
+        socketRef.current.onclose = null   // Stop onclose from queueing a retry
+        socketRef.current.close(1000)      // 1000 = normal, intentional close
       }
     }
   }, [channelId, token])
 
-  // Send a regular chat message
+  // Send a chat message. Silently ignored if the socket is not open —
+  // the send button is already disabled in that state.
   const sendMessage = useCallback((content) => {
-    if (!wsRef.current || wsRef.current.readyState !== WebSocket.OPEN) return
-    wsRef.current.send(JSON.stringify({ content }))
+    if (socketRef.current?.readyState !== WebSocket.OPEN) return
+    socketRef.current.send(JSON.stringify({ content }))
   }, [])
 
-  // sendTyping('start') — called while user is actively typing
-  // sendTyping('stop')  — called when user sends, clears input, or goes idle
+  // sendTyping('start') while the user is typing,
+  // sendTyping('stop')  when they send, clear the box, or go idle.
   const sendTyping = useCallback((action = 'start') => {
-    if (!wsRef.current || wsRef.current.readyState !== WebSocket.OPEN) return
-    wsRef.current.send(JSON.stringify({
-      type:    action === 'stop' ? 'typing_stop' : 'typing',
+    if (socketRef.current?.readyState !== WebSocket.OPEN) return
+    socketRef.current.send(JSON.stringify({
+      type: action === 'stop' ? 'typing_stop' : 'typing',
       content: '',
     }))
   }, [])

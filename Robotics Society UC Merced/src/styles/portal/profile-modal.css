@@ -1,0 +1,54 @@
+/* ── Profile Modal ───────────────────────────────────────────────────
+   The pop-up shown when a username or avatar is clicked in chat.
+   Markup: components/portal/ProfileModal.jsx
+   ────────────────────────────────────────────────────────────────── */
+
+/* ══════════════════════════════════════════════════════
+   PROFILE MODAL — shown when clicking username/avatar
+   ══════════════════════════════════════════════════════ */
+.profile-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.7);
+  z-index: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: fadeIn 0.15s ease;
+}
+.profile-modal {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 28px;
+  width: 340px;
+  max-width: 90vw;
+  position: relative;
+  box-shadow: var(--shadow);
+  animation: fadeIn 0.15s ease;
+}
+.profile-modal-loading { text-align: center; color: var(--text); padding: 20px; }
+.profile-modal-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+.profile-modal-info { flex: 1; min-width: 0; }
+.profile-modal-name {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text-h);
+  margin: 0 0 6px;
+  word-break: break-word;
+}
+.profile-modal-joined { font-size: 12px; color: var(--text-dim); margin-top: 6px; }
+.profile-modal-bio { border-top: 1px solid var(--border); padding-top: 16px; }
+.profile-modal-bio-label {
+  font-size: 11px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  margin-bottom: 8px;
+}
+.profile-modal-bio p { font-size: 14px; color: var(--text-h); line-height: 1.6; margin: 0; }

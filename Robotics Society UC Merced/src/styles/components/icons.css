@@ -1,0 +1,17 @@
+/* ── Flaticon Icon Sizing ────────────────────────────────────────────
+   Global size rules for the Flaticon <i> icons (loaded from the CDN in
+   index.html). Grouped here so icon sizes are adjusted in one place.
+   ────────────────────────────────────────────────────────────────── */
+
+/* ── Flaticon uicons — global sizing rules ───────────────────────────────── */
+.sidebar-nav-item i { font-size: 15px; flex-shrink: 0; }
+.mobile-tab-btn i   { font-size: 20px; }
+.nav-icon i         { font-size: 15px; }
+.tab-icon i         { font-size: 20px; }
+.delete-btn i, .msg-delete i, .msg-delete-own i { font-size: 13px; }
+.upload-btn i       { font-size: 18px; }
+.attachment-remove i { font-size: 14px; }
+.lightbox-close i   { font-size: 12px; }
+.channel-add-btn i  { font-size: 16px; }
+.channel-delete-btn i { font-size: 11px; }
+.pin-badge i        { font-size: 12px; }

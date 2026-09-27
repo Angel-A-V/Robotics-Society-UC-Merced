@@ -1,0 +1,84 @@
+/* ── Responsive Overrides ────────────────────────────────────────────
+   Site-wide phone/tablet overrides (900px and 480px breakpoints).
+   Component-specific breakpoints live in that component's own file —
+   only cross-cutting tweaks belong here.
+   ────────────────────────────────────────────────────────────────── */
+
+/* ══════════════════════════════════════════════════════
+   RESPONSIVE — MOBILE FIRST
+   ══════════════════════════════════════════════════════ */
+@media (max-width: 900px) {
+  /* Navbar */
+  .main-nav { padding: 0 16px; }
+  .nav-links { display: none; }
+  .nav-actions { display: none; }
+  .hamburger { display: flex; }
+
+  /* Hero */
+  .hero-section {
+    flex-direction: column;
+    padding: 48px 20px 56px;
+    min-height: auto;
+    text-align: center;
+  }
+  .hero-content { max-width: 100%; }
+  .hero-title { font-size: 40px; letter-spacing: -1px; }
+  .hero-sub { font-size: 15px; max-width: 100%; }
+  .hero-btns { justify-content: center; }
+  .hero-stats { justify-content: center; }
+  .hero-visual {
+    width: 200px;
+    height: 200px;
+    margin-top: 32px;
+  }
+  .hero-logo-img { width: 130px; height: 130px; }
+
+  /* Sections */
+  .section { padding: 56px 20px; }
+  .section-title { font-size: 26px; }
+  .section-sub { font-size: 15px; margin-bottom: 36px; }
+
+  /* Projects */
+  .projects-grid { grid-template-columns: 1fr; gap: 14px; max-width: 100%; }
+
+  /* About */
+  .about-inner { grid-template-columns: 1fr; gap: 36px; }
+  .about-text .section-title { text-align: center; }
+
+  /* Team */
+  .team-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; } /* 2 cols = 3 rows of 2, all 6 fit */
+  /* On mobile, always show the info panel (no hover) */
+  .team-hover-info { position: static; transform: none; background: rgba(0,1,1,0.92); border-top: 1px solid var(--border); border-radius: 0; }
+
+  /* CTA */
+  .cta-section { padding: 56px 20px; }
+  .cta-section h2 { font-size: 26px; }
+
+  /* Footer */
+  .footer { padding: 28px 20px; }
+
+  /* Project detail */
+  .project-hero-banner { flex-direction: column; padding: 40px 20px; min-height: auto; }
+  .project-hero-content h1 { font-size: 32px; }
+  .project-icon-large { font-size: 64px; margin-top: 20px; width: 100%; justify-content: center; }
+  .project-icon-large img { width: 160px; height: 160px; }
+  .project-body { padding: 32px 16px 56px; }
+  .arch-grid { grid-template-columns: 1fr; }
+
+  /* Admin */
+  .admin-stats { grid-template-columns: repeat(2, 1fr); }
+  .portal-sidebar { display: none; }
+
+  /* Auth */
+  .auth-card { padding: 28px 20px; }
+}
+
+@media (max-width: 480px) {
+  .hero-title { font-size: 32px; }
+  .team-grid { grid-template-columns: 1fr 1fr; } /* keeps 2-col on small phones */
+  .hero-stats { gap: 0; flex-wrap: wrap; justify-content: center; }
+  .stat-divider { margin: 0 16px; }
+  .projects-grid { grid-template-columns: 1fr; }
+  .admin-stats { grid-template-columns: repeat(2, 1fr); }
+  .btn-lg { padding: 11px 20px; font-size: 14px; }
+}

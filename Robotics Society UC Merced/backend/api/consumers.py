@@ -4,6 +4,13 @@
 # Each browser that opens the chat tab gets its own ChatConsumer instance.
 # All consumers watching the same channel share a "group" in the channel layer,
 # so when one person sends a message it instantly reaches everyone else.
+#
+# Related files:
+#   api/routing.py    maps the ws:// URL to this consumer
+#   api/broadcast.py  the same broadcasts, but callable from the REST views
+#                     (file uploads and reactions). The payload keys below and
+#                     the ones in broadcast.py must stay in step.
+#   src/hooks/useSocket.js  the browser side that receives all of this
 
 import json
 from channels.generic.websocket import AsyncWebsocketConsumer
@@ -120,6 +127,12 @@ class ChatConsumer(AsyncWebsocketConsumer):
         # Save the message to the database
         message = await self.save_message(content)
 
+        # Refresh self.user from DB so we get the latest avatar_url/role.
+        # Without this, if the user changes their avatar during a session,
+        # newer messages still broadcast the stale (cached) avatar_url=None
+        # that was set when they first connected.
+        await self.refresh_user()
+
         # Broadcast to the entire group — every connected browser gets this
         # avatar_url MUST be included here — without it, WebSocket messages arrive
         # without an avatar, causing the photo to flicker on/off as history (REST)
@@ -204,6 +217,16 @@ class ChatConsumer(AsyncWebsocketConsumer):
             return User.objects.get(id=user_id)
         except Exception:
             return None
+
+    @database_sync_to_async
+    def refresh_user(self):
+        """Reload self.user from the DB to pick up avatar/role changes mid-session."""
+        from django.contrib.auth import get_user_model
+        User = get_user_model()
+        try:
+            self.user = User.objects.get(id=self.user.id)
+        except Exception:
+            pass  # If user got deleted, keep the cached object
 
     @database_sync_to_async
     def save_message(self, content):
