@@ -4,6 +4,13 @@
 # Each browser that opens the chat tab gets its own ChatConsumer instance.
 # All consumers watching the same channel share a "group" in the channel layer,
 # so when one person sends a message it instantly reaches everyone else.
+#
+# Related files:
+#   api/routing.py    maps the ws:// URL to this consumer
+#   api/broadcast.py  the same broadcasts, but callable from the REST views
+#                     (file uploads and reactions). The payload keys below and
+#                     the ones in broadcast.py must stay in step.
+#   src/hooks/useSocket.js  the browser side that receives all of this
 
 import json
 from channels.generic.websocket import AsyncWebsocketConsumer

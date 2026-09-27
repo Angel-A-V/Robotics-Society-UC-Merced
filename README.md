@@ -138,24 +138,122 @@ Go to http://localhost:5173/register and sign up.
 
 ## 📁 Project Structure
 
+Everything is split by responsibility, so a change has one obvious home.
+
 ```
 Robotics Society UC Merced/
 ├── backend/
-│   ├── api/              # Models, views, serializers, consumers
-│   ├── core/             # Django settings, URLs, ASGI config
-│   ├── manage.py
-│   ├── requirements.txt
-│   └── .env              # ← you create this locally, never committed
+│   ├── api/
+│   │   ├── models.py         # Database tables: User, Announcement, Channel, Message, Reaction
+│   │   ├── serializers.py    # Model ↔ JSON conversion and input validation
+│   │   ├── permissions.py    # IsMember / IsAdmin role checks
+│   │   ├── broadcast.py      # Pushing updates over WebSocket from REST views
+│   │   ├── consumers.py      # The live chat WebSocket handler
+│   │   ├── routing.py        # ws:// URL → consumer
+│   │   ├── urls.py           # /api/... routes
+│   │   ├── tests.py          # API smoke tests (python manage.py test api)
+│   │   └── views/            # One module per area of the API
+│   │       ├── auth.py            # register, /me
+│   │       ├── users.py           # admin user management
+│   │       ├── announcements.py
+│   │       ├── channels.py        # chat channel CRUD
+│   │       ├── messages.py        # history, send, delete, reactions
+│   │       ├── uploads.py         # chat file attachments
+│   │       └── profile.py         # bio, avatar, public profile
+│   ├── core/                 # Django settings, root URLs, ASGI/WSGI entry
+│   └── .env                  # ← you create this locally, never committed
+│
 ├── src/
-│   ├── assets/           # Images, team photos, project photos
-│   ├── pages/            # React page components
-│   ├── hooks/            # Custom React hooks (WebSocket)
-│   ├── App.jsx
-│   └── index.css
-├── index.html
+│   ├── main.jsx              # Entry point — mounts the app
+│   ├── App.jsx               # Router: every URL → a page
+│   │
+│   ├── lib/                  # Plain JavaScript, no React
+│   │   ├── config.js         # Env URLs + every size/time limit in one place
+│   │   ├── api.js            # Every backend call lives here
+│   │   ├── auth.js           # Token storage and request headers
+│   │   ├── media.js          # Upload URLs, image detection
+│   │   ├── format.js         # Date and time formatting
+│   │   └── chat.js           # Message grouping, reaction grouping
+│   │
+│   ├── hooks/                # Reusable stateful behaviour
+│   │   ├── useSession.js     # Who is logged in
+│   │   ├── useSocket.js      # The chat WebSocket
+│   │   ├── usePortalData.js  # Portal data loading + polling
+│   │   ├── useScrollSpy.js   # Nav bar active-link tracking
+│   │   ├── useRevealOnScroll.js
+│   │   └── useEscapeKey.js
+│   │
+│   ├── data/                 # CONTENT ONLY — edit copy here, not in components
+│   │   ├── site.js           # Club info, nav/footer links, hero, about
+│   │   ├── team.js           # Board members
+│   │   ├── projects.js       # The four homepage project cards
+│   │   ├── contact.js        # Partnership cards, socials, lab location
+│   │   └── projects/         # Per-project text, timelines, leads, galleries
+│   │
+│   ├── components/
+│   │   ├── layout/           # Navbar, Footer, ScrollToTop
+│   │   ├── ui/               # Avatar, Slideshow, Lightbox, PasswordField, …
+│   │   ├── project/          # Hero, SystemsGrid, Timeline, LeadsGrid, …
+│   │   └── portal/           # Sidebar, mobile tabs, ProfileModal
+│   │       ├── tabs/         # Announcements, Chat, Profile, Admin
+│   │       └── chat/         # Channel list, messages, reactions, input bar
+│   │
+│   ├── pages/                # One file per route
+│   │   ├── Home.jsx  Contact.jsx  Login.jsx  Register.jsx  Portal.jsx
+│   │   └── projects/         # BattleBots, RallyKart, RobotArm, AutonomousRobot
+│   │
+│   ├── styles/               # See "Styling" below
+│   └── assets/               # Images, team photos, project photos
+│
+├── index.html                # Loads the Flaticon icon fonts
 ├── package.json
-└── vite.config.js
+└── vite.config.js            # Dev-server proxy: /api and /ws → Django :8000
 ```
+
+---
+
+## 🎨 Styling
+
+`src/styles/index.css` contains no styles of its own — it is a manifest that
+`@import`s the partials **in cascade order**. Vite inlines them into one file at
+build time, so there is no extra network cost.
+
+**Order matters.** CSS applies the last matching rule, so moving an `@import`
+can change how the site looks. Add new files inside the matching group, and
+leave `overrides.css` last.
+
+| Want to change… | Edit |
+|---|---|
+| A colour, font, shadow or radius | `styles/base/tokens.css` |
+| The nav bar | `styles/components/navbar.css` |
+| A button | `styles/components/buttons.css` |
+| The footer | `styles/components/footer.css` |
+| The homepage (hero, cards, team) | `styles/pages/home.css` |
+| Login / register screens | `styles/pages/auth.css` |
+| A project page | `styles/pages/project-detail.css` |
+| The contact page | `styles/pages/contact.css` |
+| The portal shell and sidebar | `styles/portal/layout.css` |
+| The chat | `styles/portal/chat.css` |
+| Phone / tablet layout | `styles/responsive.css` |
+
+Colours are CSS variables defined once in `tokens.css` — use
+`var(--sapphire)`, never a raw hex value.
+
+---
+
+## 🧩 Common Tasks
+
+| Task | What to do |
+|---|---|
+| Change any wording on the site | Edit the matching file in `src/data/` |
+| Add a board member | Add a photo to `src/assets/team/`, then an entry in `src/data/team.js` |
+| Update a project's timeline | Edit `TIMELINE` in `src/data/projects/<project>.js` |
+| Add photos to a project gallery | Add them to `src/assets/projects/`, then to `SLIDES` in that project's data file |
+| Add a whole new project page | Add a card to `src/data/projects.js`, create `src/data/projects/<slug>.js`, copy a page from `src/pages/projects/`, add a `<Route>` in `App.jsx` |
+| Add a new API endpoint | Add the view to the right module in `backend/api/views/`, export it in `views/__init__.py`, add the path to `api/urls.py`, then add a helper to `src/lib/api.js` |
+| Change an upload size limit | Three places, keep them in sync: `src/lib/config.js`, `backend/api/views/uploads.py`, `DATA_UPLOAD_MAX_MEMORY_SIZE` in `core/settings.py` |
+| Add a portal tab | Add an entry to `src/components/portal/portalTabs.js`, then render it in `pages/Portal.jsx` |
+| Run the backend tests | `cd backend && python manage.py test api` |
 
 ---
 

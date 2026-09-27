@@ -1,6 +1,20 @@
+# ── Django Settings ───────────────────────────────────────────────────────────
+# Reads secrets from backend/.env (never committed — see .gitignore).
+#
+# Sections below, in order:
+#   Security · Apps · Channels · Middleware · Templates · Database ·
+#   Persistent storage · Passwords · Locale · Static & media · CORS ·
+#   REST framework · JWT · Custom user
+#
+# Deployment notes:
+#   - Runs under Daphne (ASGI), not WSGI, because chat needs WebSockets.
+#   - CHANNEL_LAYERS uses in-memory storage, which works for a single process.
+#     Running more than one worker needs Redis — see the note at that setting.
+
 from pathlib import Path
 import os
 from dotenv import load_dotenv
+
 load_dotenv()
 
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -10,6 +24,9 @@ SECRET_KEY = os.environ.get('SECRET_KEY')
 DEBUG = os.environ.get('DEBUG', 'False') == 'True'
 ALLOWED_HOSTS = ['*']  # Railway sets the host header; safe behind their proxy
 
+# ── Apps ──
+# 'daphne' must come first: it overrides the runserver command so local
+# development serves WebSockets too.
 INSTALLED_APPS = [
     'daphne',
     'django.contrib.admin',
@@ -25,9 +42,18 @@ INSTALLED_APPS = [
     'api',
 ]
 
+# ── Channels (WebSockets) ──
 ASGI_APPLICATION = 'core.asgi.application'
+
+# In-memory channel layer: fine for one server process, which is how this is
+# deployed. It does NOT work across processes — if this is ever scaled to
+# multiple workers, messages would only reach users on the same worker.
+# The fix at that point is to swap this for channels_redis.
 CHANNEL_LAYERS = {'default': {'BACKEND': 'channels.layers.InMemoryChannelLayer'}}
 
+# ── Middleware ──
+# Order matters. CORS must be first so it can answer preflight requests, and
+# WhiteNoise sits high up so it serves static files before Django routing.
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
@@ -40,6 +66,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
+# ── URLs & templates ──
 ROOT_URLCONF = 'core.urls'
 
 TEMPLATES = [{
@@ -53,8 +80,11 @@ TEMPLATES = [{
     ]},
 }]
 
+# Kept for tooling that expects it; the app actually runs over ASGI.
 WSGI_APPLICATION = 'core.wsgi.application'
 
+# ── Database ──
+# SQLite. The path is overridden below when a persistent volume is mounted.
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
@@ -79,6 +109,7 @@ if os.path.isdir(PERSIST_DIR) and os.access(PERSIST_DIR, os.W_OK):
 else:
     MEDIA_ROOT_OVERRIDE = None
 
+# ── Password rules ──
 AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
     {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator'},
@@ -86,16 +117,21 @@ AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator'},
 ]
 
+# ── Locale ──
 LANGUAGE_CODE = 'en-us'
 TIME_ZONE = 'UTC'
 USE_I18N = True
 USE_TZ = True
 
+# ── Static files & uploads ──
+# STATIC = Django admin's own CSS/JS. MEDIA = user uploads (avatars, chat files).
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 MEDIA_URL = '/media/'
 MEDIA_ROOT = MEDIA_ROOT_OVERRIDE if MEDIA_ROOT_OVERRIDE else os.path.join(BASE_DIR, 'media')
+# Matches MAX_UPLOAD_BYTES in api/views/uploads.py and the browser-side
+# check in src/lib/config.js. Change all three together.
 DATA_UPLOAD_MAX_MEMORY_SIZE = 8 * 1024 * 1024
 
 # ── CORS — hardcoded explicit allowlist + regex fallback ─────────────────────
@@ -118,16 +154,22 @@ CSRF_TRUSTED_ORIGINS = CORS_ALLOWED_ORIGINS + [
 CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOW_ALL_HEADERS = True
 
+# ── REST framework ──
+# Everything requires a login by default; views opt out with AllowAny.
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': ('rest_framework_simplejwt.authentication.JWTAuthentication',),
     'DEFAULT_PERMISSION_CLASSES': ('rest_framework.permissions.IsAuthenticated',),
 }
 
+# ── JWT lifetimes ──
 from datetime import timedelta
+
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(hours=1),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=7),
 }
 
+# ── Custom user model ──
+# Must never change after the first migration.
 AUTH_USER_MODEL = 'api.User'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'

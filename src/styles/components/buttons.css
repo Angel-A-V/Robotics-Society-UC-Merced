@@ -1,0 +1,43 @@
+/* ── Buttons ─────────────────────────────────────────────────────────
+   The shared .btn system (primary / outline / ghost / lg / full-width).
+   Used on every page — add a new modifier here rather than restyling
+   a button inline.
+   ────────────────────────────────────────────────────────────────── */
+
+/* ══════════════════════════════════════════════════════
+   BUTTONS
+   ══════════════════════════════════════════════════════ */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 20px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  border: 1px solid transparent;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+.btn-primary {
+  background: var(--sapphire);
+  color: #fff;
+  border-color: var(--sapphire);
+}
+.btn-primary:hover { background: #1a7af5; box-shadow: var(--shadow-blue); }
+.btn-outline {
+  background: transparent;
+  color: var(--sapphire);
+  border-color: var(--border);
+}
+.btn-outline:hover { border-color: var(--sapphire); background: var(--sapphire-dim); }
+.btn-ghost {
+  background: transparent;
+  color: var(--text);
+  border-color: transparent;
+}
+.btn-ghost:hover { color: var(--text-h); }
+.btn-lg { padding: 13px 28px; font-size: 16px; }
+.full-width { width: 100%; justify-content: center; }

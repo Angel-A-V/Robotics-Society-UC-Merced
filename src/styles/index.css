@@ -1,0 +1,60 @@
+/* ══════════════════════════════════════════════════════════════════════
+   UCM ROBOTICS SOCIETY — STYLESHEET MANIFEST
+   ══════════════════════════════════════════════════════════════════════
+
+   This file contains NO styles of its own. It only lists the partials
+   below in the order the browser must read them.
+
+   ORDER MATTERS. CSS applies the LAST matching rule of equal weight, so
+   moving an @import up or down can silently change how the site looks.
+   When adding a new file, add it inside the matching group below —
+   and leave overrides.css last.
+
+   Where to edit what:
+     a colour / font / shadow ......... base/tokens.css
+     the nav bar ...................... components/navbar.css
+     a button ......................... components/buttons.css
+     the home page .................... pages/home.css
+     a project page ................... pages/project-detail.css
+     the members portal chat .......... portal/chat.css
+     phone / tablet layout ............ responsive.css
+   ══════════════════════════════════════════════════════════════════════ */
+
+/* ── Base ── must come first: variables and resets everything else builds on */
+@import './base/tokens.css';
+@import './base/reset.css';
+
+/* ── Reusable components ── shared across more than one page */
+@import './components/navbar.css';
+@import './components/buttons.css';
+@import './components/animated-card.css';
+@import './components/section.css';
+
+/* ── Public pages ── */
+@import './pages/home.css';
+@import './components/footer.css';
+@import './pages/auth.css';
+
+/* ── Members portal ── */
+@import './portal/layout.css';
+@import './portal/announcements.css';
+@import './portal/chat.css';
+@import './portal/admin.css';
+
+/* ── Project pages ── */
+@import './pages/project-detail.css';
+@import './components/slideshow.css';
+@import './components/lead-card.css';
+
+/* ── Site-wide responsive overrides ── after every layout above */
+@import './responsive.css';
+
+/* ── Remaining pages and portal panels ── */
+@import './pages/contact.css';
+@import './portal/profile-modal.css';
+@import './portal/profile.css';
+@import './portal/channels.css';
+
+/* ── Icon sizing and final overrides ── keep these two last ── */
+@import './components/icons.css';
+@import './overrides.css';

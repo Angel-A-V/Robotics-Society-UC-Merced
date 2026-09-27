@@ -1,0 +1,25 @@
+/* ── Admin Tab ───────────────────────────────────────────────────────
+   Admin stat cards and the users table with its role action buttons.
+   Markup: components/portal/tabs/AdminTab.jsx
+   ────────────────────────────────────────────────────────────────── */
+
+.admin-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 28px; }
+.admin-stat-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 10px; padding: 20px; text-align: center; }
+.admin-stat-num { font-size: 32px; font-weight: 700; font-family: var(--font); }
+.admin-stat-label { font-size: 12px; color: var(--text); margin-top: 4px; }
+.users-table-wrap { overflow-x: auto; border-radius: 10px; border: 1px solid var(--border); }
+.users-table { width: 100%; border-collapse: collapse; }
+.users-table th { text-align: left; font-size: 11px; letter-spacing: 1px; text-transform: uppercase; color: var(--text); padding: 10px 14px; background: var(--bg2); border-bottom: 1px solid var(--border); }
+.users-table td { padding: 10px 14px; font-size: 13px; border-bottom: 1px solid rgba(30,42,56,0.5); color: var(--text-h); }
+.users-table tr:last-child td { border-bottom: none; }
+.users-table tr:hover td { background: rgba(255,255,255,0.01); }
+.self-row td { background: rgba(17,102,220,0.03); }
+.you-badge { font-size: 10px; background: var(--sapphire-dim); color: var(--sapphire); padding: 2px 6px; border-radius: 4px; margin-left: 6px; }
+.action-btns { display: flex; gap: 6px; flex-wrap: wrap; }
+.btn-sm { padding: 4px 10px; border-radius: 6px; font-size: 11px; border: 1px solid; cursor: pointer; font-family: inherit; transition: all 0.15s; }
+.btn-approve { border-color: var(--green); color: var(--green); background: rgba(16,185,129,0.1); }
+.btn-approve:hover { background: rgba(16,185,129,0.2); }
+.btn-promote { border-color: var(--sapphire); color: var(--sapphire); background: var(--sapphire-dim); }
+.btn-promote:hover { background: rgba(17,102,220,0.25); }
+.btn-demote { border-color: var(--danger); color: #fca5a5; background: rgba(239,68,68,0.1); }
+.btn-demote:hover { background: rgba(239,68,68,0.2); }

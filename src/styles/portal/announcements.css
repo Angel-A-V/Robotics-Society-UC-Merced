@@ -1,0 +1,105 @@
+/* ── Announcements Tab ───────────────────────────────────────────────
+   Announcement cards, the admin create form and the pin toggle button.
+   Markup: components/portal/tabs/AnnouncementsTab.jsx
+   ────────────────────────────────────────────────────────────────── */
+
+/* Pin Toggle Button — matches sapphire color scheme */
+.pin-toggle-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--bg3);
+  color: var(--text);
+  cursor: pointer;
+  font-size: 14px;
+  width: auto;
+  align-self: flex-end;
+  transition: border-color 0.2s, background 0.2s, color 0.2s;
+}
+
+.pin-toggle-btn:hover {
+  border-color: var(--sapphire);
+  color: var(--text-h);
+}
+
+.pin-toggle-btn i {
+  font-size: 16px;
+}
+
+.pin-toggle-btn.active {
+  background: var(--sapphire-dim);
+  border-color: var(--sapphire);
+  color: var(--sapphire);
+}
+
+.announcement-form {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 20px;
+  margin-bottom: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.announcement-form input,
+.announcement-form textarea {
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 9px 12px;
+  color: var(--text-h);
+  font-size: 14px;
+  width: 100%;
+  resize: vertical;
+  font-family: inherit;
+}
+.announcement-form input:focus,
+.announcement-form textarea:focus { outline: none; border-color: var(--sapphire); }
+.checkbox-label { display: flex; align-items: center; gap: 8px; font-size: 14px; color: var(--text); }
+.announcement-card {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 20px;
+  margin-bottom: 0;
+}
+.announcement-card.pinned { border-color: rgba(245,158,11,0.35); }
+.pin-badge { font-size: 12px; color: var(--warning); margin-bottom: 6px; }
+.announcement-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;  /* vertically center title and trash */
+  gap: 12px;
+}
+.announcement-header h3 { margin: 0; color: var(--text-h); font-size: 16px; flex: 1; }
+.announcement-meta { font-size: 12px; color: var(--text); margin-top: 10px; }
+.announcement-card .announcement-body { margin-top: 10px; }
+.announcement-card p { color: var(--text); line-height: 1.6; font-size: 14px; margin-top: 10px; }
+/* Trash button — larger, always visible on mobile, centered */
+.delete-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 18px;
+  opacity: 0.45;
+  transition: opacity 0.15s, color 0.15s;
+  padding: 6px 8px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  align-self: center;
+}
+.delete-btn:hover { opacity: 1; color: var(--danger); }
+.delete-btn.small { font-size: 16px; }
+
+/* Make announcement delete icon white */
+.announcement-card .delete-btn i {
+  color: #fff !important;
+  font-size: 18px;
+}

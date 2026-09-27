@@ -1,0 +1,127 @@
+/* ── Portal Layout ───────────────────────────────────────────────────
+   The portal shell: two-column layout, sidebar, role badges, tab header
+   and the shared empty-state. Does NOT include the tabs themselves —
+   those each have their own file in this folder.
+   ────────────────────────────────────────────────────────────────── */
+
+/* ══════════════════════════════════════════════════════
+   PORTAL LAYOUT
+   ══════════════════════════════════════════════════════ */
+.portal-layout { display: flex; min-height: 100vh; background: var(--bg); }
+.portal-sidebar {
+  width: 256px;
+  flex-shrink: 0;
+  background: var(--bg2);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+}
+.sidebar-header { padding: 20px 18px; border-bottom: 1px solid var(--border); }
+.sidebar-logo {
+  font-family: var(--font);
+  font-size: 13px;
+  color: var(--sapphire);
+  text-decoration: none;
+  display: block;
+  margin-bottom: 18px;
+}
+.sidebar-user { display: flex; align-items: center; gap: 10px; }
+.sidebar-avatar {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: var(--sapphire-dim);
+  border: 1px solid var(--sapphire-glow);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 15px;
+  color: var(--sapphire);
+  font-weight: 700;
+  flex-shrink: 0;
+}
+.sidebar-username { font-size: 14px; font-weight: 600; color: var(--text-h); }
+.role-badge {
+  font-size: 11px;
+  font-family: var(--font);
+  padding: 2px 8px;
+  border-radius: 4px;
+  display: inline-block;
+  margin-top: 2px;
+}
+.role-pending { background: rgba(245,158,11,0.15); color: var(--warning); }
+.role-member  { background: rgba(16,185,129,0.15); color: var(--green); }
+.role-admin   { background: rgba(17,102,220,0.1); color: #1e40af; }
+.sidebar-nav { padding: 14px 10px; flex: 1; }
+.nav-section-label {
+  font-size: 10px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  padding: 0 8px;
+  margin-bottom: 6px;
+}
+.sidebar-nav-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 9px 12px;
+  border-radius: 8px;
+  background: none;
+  border: none;
+  color: var(--text);
+  font-size: 14px;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.15s;
+  text-align: left;
+}
+.sidebar-nav-item:hover { background: rgba(255,255,255,0.04); color: var(--text-h); }
+.sidebar-nav-item.active { background: var(--sapphire-dim); color: var(--sapphire); }
+.nav-icon { font-size: 15px; }
+.sidebar-logout {
+  margin: 14px;
+  padding: 10px;
+  width: calc(100% - 28px);
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--text);
+  font-size: 13px;
+  transition: all 0.15s;
+}
+.sidebar-logout:hover { border-color: var(--danger); color: #fca5a5; }
+.portal-main { flex: 1; min-width: 0; overflow-y: auto; }
+.pending-banner {
+  background: rgba(245,158,11,0.08);
+  border-bottom: 1px solid rgba(245,158,11,0.25);
+  padding: 11px 28px;
+  font-size: 14px;
+  color: #fcd34d;
+}
+.tab-content { padding: 28px; }
+.tab-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 24px;
+  gap: 12px;
+  flex-wrap: wrap;          /* wraps button below title on narrow screens */
+}
+.tab-header h2 { margin: 0 0 4px; font-size: 22px; }
+.tab-header p { margin: 0; color: var(--text); font-size: 14px; }
+.tab-header .btn { flex-shrink: 0; }
+.empty-state { text-align: center; padding: 56px; color: var(--text); font-size: 15px; }
+
+/* Sidebar nav item layout — icon + label inline */
+.sidebar-nav-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.nav-item-label { flex: 1; }
