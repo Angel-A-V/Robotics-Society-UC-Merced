@@ -5,7 +5,14 @@ import reactRefresh from 'eslint-plugin-react-refresh'
 import { defineConfig, globalIgnores } from 'eslint/config'
 
 export default defineConfig([
-  globalIgnores(['dist']),
+  // ── Ignored paths ──
+  // Only src/ is ours. Without these, `npm run lint` also walks Django's
+  // collected static files and the Python venv's vendored JavaScript, which
+  // buries our own 14 findings under ~3,200 from third-party code.
+  globalIgnores([
+    'dist',         // Build output
+    'backend/**',   // Python side — the only JS in there is vendored
+  ]),
   {
     files: ['**/*.{js,jsx}'],
     extends: [

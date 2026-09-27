@@ -1,4 +1,8 @@
-# serializers.py — converts Python objects to/from JSON for the API
+# ── Serializers ───────────────────────────────────────────────────────────────
+# Converts model instances to JSON for API responses, and validates incoming
+# JSON on the way in.
+#
+# The views that use these live in api/views/.
 
 from rest_framework import serializers
 from django.contrib.auth import get_user_model
@@ -7,6 +11,7 @@ from .models import Announcement, Channel, Message, Reaction
 User = get_user_model()   # Gets our custom User model
 
 
+# ── User ──
 class UserSerializer(serializers.ModelSerializer):
     """Serializes user data for API responses. Never exposes password."""
 
@@ -16,6 +21,7 @@ class UserSerializer(serializers.ModelSerializer):
         read_only_fields = ['id', 'date_joined', 'last_login']
 
 
+# ── Registration ──
 class RegisterSerializer(serializers.ModelSerializer):
     """Used for the registration endpoint — handles password hashing."""
 
@@ -67,6 +73,7 @@ class RegisterSerializer(serializers.ModelSerializer):
         return user
 
 
+# ── Announcements ──
 class AnnouncementSerializer(serializers.ModelSerializer):
     """Serializes announcements, shows author's username instead of their ID."""
 
@@ -78,6 +85,7 @@ class AnnouncementSerializer(serializers.ModelSerializer):
         read_only_fields = ['id', 'author_name', 'created_at', 'updated_at']
 
 
+# ── Reactions ──
 class ReactionSerializer(serializers.ModelSerializer):
     """Serializes a single reaction — used inside MessageSerializer."""
     username = serializers.CharField(source='user.username', read_only=True)
@@ -88,6 +96,7 @@ class ReactionSerializer(serializers.ModelSerializer):
         read_only_fields = ['id', 'username']
 
 
+# ── Messages ──
 class MessageSerializer(serializers.ModelSerializer):
     """Serializes chat messages with author info, reactions, and file attachments."""
     username   = serializers.CharField(source='author.username', read_only=True)
@@ -104,9 +113,17 @@ class MessageSerializer(serializers.ModelSerializer):
             'reactions',                              # Emoji reactions
             'created_at',
         ]
-        read_only_fields = ['id', 'username', 'role', 'avatar_url', 'created_at', 'reactions']
+        # `channel` is read-only because MessageCreateView always takes it from
+        # the URL (/chat/channels/<id>/messages/send) and overrides whatever the
+        # body says. Leaving it writable made it a REQUIRED body field, so that
+        # endpoint rejected every request with 400. Covered by
+        # MessageTests / PermissionTests.test_member_can_send_messages in tests.py.
+        read_only_fields = [
+            'id', 'username', 'role', 'avatar_url', 'created_at', 'reactions', 'channel',
+        ]
 
 
+# ── Channels ──
 class ChannelSerializer(serializers.ModelSerializer):
     class Meta:
         model = Channel

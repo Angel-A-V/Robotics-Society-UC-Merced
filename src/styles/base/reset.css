@@ -1,0 +1,26 @@
+/* ── Reset & Base Elements ───────────────────────────────────────────
+   Box-sizing reset, body defaults and the #root wrapper. Applies to the
+   whole site, so keep it small and generic.
+   ────────────────────────────────────────────────────────────────── */
+
+/* ── Reset ───────────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  background: var(--bg);
+  color: var(--text-h);
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+#root {
+  width: 100%;
+  max-width: 100%;
+  text-align: left;
+  border: none;
+  min-height: 100svh;
+}
+img { max-width: 100%; display: block; }
+button { cursor: pointer; font-family: inherit; }

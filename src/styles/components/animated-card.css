@@ -1,0 +1,17 @@
+/* ── Animated Card ───────────────────────────────────────────────────
+   Fade + slide-in effect for cards that scroll into view.
+   Markup: components/ui/AnimatedCard.jsx
+   ────────────────────────────────────────────────────────────────── */
+
+/* ══════════════════════════════════════════════════════
+   ANIMATED CARDS (scroll-triggered fade+slide in)
+   ══════════════════════════════════════════════════════ */
+.animated-card {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+.card-visible {
+  opacity: 1;
+  transform: translateY(0);
+}

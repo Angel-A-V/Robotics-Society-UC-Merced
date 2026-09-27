@@ -1,0 +1,108 @@
+/* ── New Channel Form ────────────────────────────────────────────────
+   The admin-only "create a channel" form in the chat sidebar.
+   Markup: components/portal/chat/ChannelList.jsx
+   ────────────────────────────────────────────────────────────────── */
+
+/* ═══════════════════════════════════════
+   NEW CHANNEL FORM
+   ═══════════════════════════════════════ */
+
+.new-channel-form {
+  display: flex;
+  flex-direction: column;
+
+  gap: 10px;
+
+  padding: 12px;
+
+  margin-bottom: 10px;
+
+  background: rgba(255,255,255,0.03);
+
+  border: 1px solid var(--border);
+
+  border-radius: 10px;
+
+  animation: fadeIn 0.15s ease;
+}
+
+.new-channel-input {
+  width: 100%;
+
+  background: var(--bg3);
+
+  border: 1px solid var(--border);
+
+  border-radius: 8px;
+
+  padding: 10px 12px;
+
+  color: var(--text-h);
+
+  font-size: 13px;
+
+  transition:
+    border-color 0.15s,
+    background 0.15s;
+}
+
+.new-channel-input:focus {
+  outline: none;
+
+  border-color: var(--sapphire);
+
+  background: rgba(17,102,220,0.04);
+}
+
+.new-channel-input::placeholder {
+  color: var(--text-dim);
+}
+
+.new-channel-actions {
+  display: flex;
+
+  justify-content: flex-end;
+
+  gap: 8px;
+}
+
+.channel-create-btn,
+.channel-cancel-btn {
+  padding: 7px 12px;
+
+  border-radius: 7px;
+
+  font-size: 12px;
+
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition: all 0.15s;
+}
+
+.channel-create-btn {
+  background: var(--sapphire);
+
+  color: white;
+
+  border: none;
+}
+
+.channel-create-btn:hover {
+  background: #1a7af5;
+}
+
+.channel-cancel-btn {
+  background: transparent;
+
+  border: 1px solid var(--border);
+
+  color: var(--text);
+}
+
+.channel-cancel-btn:hover {
+  background: rgba(255,255,255,0.05);
+
+  color: var(--text-h);
+}

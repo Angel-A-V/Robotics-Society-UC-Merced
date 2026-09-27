@@ -1,0 +1,16 @@
+/* ── Late Overrides ──────────────────────────────────────────────────
+   Rules that MUST load last because they override earlier files.
+   Loading this any earlier changes how the site looks, so leave it at
+   the bottom of the import list in index.css.
+   ────────────────────────────────────────────────────────────────── */
+
+.project-icon-large img {
+  width: 320px;
+  height: 320px;
+  object-fit: contain;
+  filter: brightness(0) invert(1);
+}
+/* Mobile rally logo */
+@media (max-width: 1024px) {
+  .project-icon-large img { width: 180px; height: 180px; }
+}

@@ -1,3 +1,6 @@
+# ── App Config ────────────────────────────────────────────────────────────────
+# Registers the 'api' app. Listed in INSTALLED_APPS in core/settings.py.
+
 from django.apps import AppConfig
 
 

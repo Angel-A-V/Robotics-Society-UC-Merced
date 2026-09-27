@@ -1,0 +1,120 @@
+/* ── Profile Tab ─────────────────────────────────────────────────────
+   The "Profile & Settings" form: avatar uploader, bio field and the
+   read-only account info grid.
+   Markup: components/portal/tabs/ProfileTab.jsx
+   ────────────────────────────────────────────────────────────────── */
+
+/* ══════════════════════════════════════════════════════
+   PROFILE SETTINGS PAGE — inside portal tab
+   ══════════════════════════════════════════════════════ */
+.profile-settings-form {
+  max-width: 540px;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+.profile-avatar-section {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 20px;
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+}
+.profile-avatar-wrap {
+  position: relative;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+.profile-avatar-img {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid var(--sapphire-glow);
+  display: block;
+}
+.profile-avatar-placeholder {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 32px;
+  font-weight: 700;
+  border: 2px solid var(--sapphire-glow);
+}
+.profile-avatar-overlay {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: rgba(0,0,0,0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  color: #fff;
+  opacity: 0;
+  transition: opacity 0.2s;
+  font-weight: 600;
+}
+.profile-avatar-wrap:hover .profile-avatar-overlay { opacity: 1; }
+.profile-avatar-info strong { display: block; font-size: 16px; color: var(--text-h); margin-bottom: 6px; }
+.profile-avatar-hint { font-size: 12px; color: var(--text-dim); margin-top: 8px; line-height: 1.5; }
+
+.profile-field { display: flex; flex-direction: column; gap: 8px; }
+.profile-label { font-size: 13px; font-weight: 600; color: var(--text-h); }
+.profile-label-hint { font-weight: 400; color: var(--text-dim); font-size: 12px; }
+.profile-bio-input {
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 10px 14px;
+  color: var(--text-h);
+  font-size: 14px;
+  font-family: inherit;
+  resize: vertical;
+  min-height: 100px;
+  transition: border-color 0.2s;
+  line-height: 1.6;
+}
+.profile-bio-input:focus { outline: none; border-color: var(--sapphire); }
+.profile-info-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+.profile-info-item {
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 12px;
+}
+.profile-info-label { 
+  display: block;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-dim); 
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  margin-bottom: 8px; 
+}
+.profile-info-value { 
+  display: block;
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--text-h);
+  line-height: 1.4; 
+  word-break: break-word; 
+}
+
+/* Sidebar user avatar — profile photo if set */
+.sidebar-avatar img { width: 34px; height: 34px; border-radius: 50%; object-fit: cover; }
+
+@media (max-width: 900px) {
+  .profile-info-grid { grid-template-columns: 1fr; }
+  .profile-avatar-section { flex-direction: column; text-align: center; }
+  .profile-modal { width: 90vw; }
+}
