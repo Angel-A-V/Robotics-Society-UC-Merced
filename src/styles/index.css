@@ -46,6 +46,7 @@
 /* ── Project pages ── */
 @import './pages/project-detail.css';
 @import './components/slideshow.css';
+@import './components/timeline-rail.css';
 @import './components/lead-card.css';
 
 /* ── Site-wide responsive overrides ── after every layout above */

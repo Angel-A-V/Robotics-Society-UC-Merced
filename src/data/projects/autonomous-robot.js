@@ -12,14 +12,17 @@ import Design4 from '../../assets/projects/autonomous/design4.png'
 import Design5 from '../../assets/projects/autonomous/design5.png'
 import ChassisSketch from '../../assets/projects/autonomous/chassis-sketch.webp'
 import RosPipe  from '../../assets/projects/autonomous/rospipe.png'
+import RobotPhoto from '../../assets/projects/autonomous/autonomous-robot.jpg'
 
-// ── Hero ──
+// ── Hero ── colours: electric blue with a cyan "camera / sensor" glow
 export const HERO = {
   title: 'Autonomous Robot',
   tagline: 'A ground-based autonomous platform using ROS 2, CAN bus motors, and computer vision to navigate and interact with its environment',
   status: 'Active Project',
-  accent: '#3b82f6',
-  background: 'linear-gradient(135deg, #020b1a 0%, #0a1f3d 50%, #020b1a 100%)',
+  accent: '#3B82F6',
+  accent2: '#22D3EE',
+  photo: RobotPhoto,
+  photoPos: 'center 45%',
   icon: 'fi fi-sr-home-robot',
   tags: ['ROS 2', 'CAN Bus', 'Computer Vision', 'Machine Learning', 'Motor Control', 'Python', 'C++'],
 }

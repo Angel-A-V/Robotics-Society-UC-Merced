@@ -5,7 +5,7 @@
 import DarrenPhoto  from '../../assets/team/Darren.jpg'
 import GustavoPhoto from '../../assets/team/Gustavo.jpg'
 import AngelPhoto   from '../../assets/team/Angel_RallyKart.png'
-import RallyLogo    from '../../assets/logos/rally.png'
+import RallyCrest   from '../../assets/projects/rally/RS_RK_crest.webp'
 import { RALLY_INSTAGRAM_URL } from '../site'
 
 import Frame   from '../../assets/projects/rally/frame.png'
@@ -18,14 +18,14 @@ import Engine6 from '../../assets/projects/rally/Engine6.JPG'
 import Engine7 from '../../assets/projects/rally/Engine7.JPG'
 import GoKart  from '../../assets/projects/rally/gokart.jpg'
 
-// ── Hero ──
+// ── Hero ── colours: the gold and blue of the Rally Kart logo
 export const HERO = {
   title: 'Rally Kart',
   tagline: 'A student-built single-seat rally platform with a custom space-frame chassis, CAN bus electronics, and a scalable drivetrain built for performance and safety',
   status: 'Active Project',
-  accent: '#f59e0b',
-  background: 'linear-gradient(135deg, #1a0e00 0%, #3d2500 50%, #1a0e00 100%)',
-  logoSrc: RallyLogo,
+  accent: '#FDB913',
+  accent2: '#1463FF',
+  crest: RallyCrest,   // The page shows the pixel-art kart on the right (see RallyKart.jsx)
   link: { href: RALLY_INSTAGRAM_URL, label: 'Follow @rs_rallykart', icon: 'fi fi-brands-instagram' },
 }
 

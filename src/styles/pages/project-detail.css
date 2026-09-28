@@ -1,6 +1,7 @@
 /* ── Project Detail Pages ────────────────────────────────────────────
    Shared layout for all four project pages: hero banner, back button,
-   status badge, body sections, architecture grid, timeline and callouts.
+   status badge, body sections, architecture grid and callouts. The timeline
+   has its own file: components/timeline-rail.css.
    Markup: pages/projects/*.jsx
    ────────────────────────────────────────────────────────────────── */
 
@@ -8,25 +9,73 @@
    PROJECT DETAIL PAGES
    ══════════════════════════════════════════════════════ */
 .project-hero-banner {
+  /* Set per project from HERO.accent / HERO.accent2 (see ProjectHero.jsx) */
+  --hero-accent: var(--sapphire);
+  --hero-accent-2: var(--hero-accent);
   position: relative;
-  min-height: 400px;
+  min-height: 420px;
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 72px 80px;
   overflow: hidden;
+  background: var(--bg);
 }
-.project-hero-bg { position: absolute; inset: 0; z-index: 0; }
+/* Two glows in the project's colours over a near-black base */
+.project-hero-bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background:
+    radial-gradient(ellipse 55% 85% at 82% 35%, color-mix(in srgb, var(--hero-accent) 30%, transparent), transparent 70%),
+    radial-gradient(ellipse 45% 70% at 8% 105%, color-mix(in srgb, var(--hero-accent-2) 22%, transparent), transparent 70%),
+    linear-gradient(135deg, var(--bg) 0%, color-mix(in srgb, var(--hero-accent) 8%, var(--bg)) 100%);
+}
+/* Project photo on the right, fading out towards the text on the left */
+.project-hero-photo {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 60%;
+  z-index: 0;
+  background-size: cover;
+  opacity: 0.7;
+  -webkit-mask-image: linear-gradient(to right, transparent 0%, black 45%);
+  mask-image: linear-gradient(to right, transparent 0%, black 45%);
+}
+/* Tint the photo with the project colour so it belongs to the page */
+.project-hero-photo::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(to top, var(--bg) 0%, transparent 35%),
+    color-mix(in srgb, var(--hero-accent) 22%, transparent);
+  mix-blend-mode: multiply;
+}
+/* Faint blueprint grid, tinted with the project colour */
 .project-hero-banner::before {
   content: '';
   position: absolute;
   inset: 0;
   background-image:
-    linear-gradient(rgba(17,102,220,0.06) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(17,102,220,0.06) 1px, transparent 1px);
+    linear-gradient(color-mix(in srgb, var(--hero-accent) 9%, transparent) 1px, transparent 1px),
+    linear-gradient(90deg, color-mix(in srgb, var(--hero-accent) 9%, transparent) 1px, transparent 1px);
   background-size: 40px 40px;
   z-index: 1;
   pointer-events: none;
+}
+/* Stripe along the bottom edge, fading from one project colour to the other */
+.project-hero-banner::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 3px;
+  z-index: 2;
+  background: linear-gradient(90deg, var(--hero-accent), var(--hero-accent-2) 55%, transparent);
 }
 .project-hero-content { position: relative; z-index: 2; max-width: 580px; }
 /* Back button + status badge in a clean top row — separated with gap */
@@ -38,7 +87,17 @@
   margin-bottom: 20px;
 }
 .project-hero-content h1 { font-size: 46px; margin: 0 0 14px; color: var(--text-h); letter-spacing: -1px; }
-.project-hero-content > p { color: var(--text); font-size: 16px; }
+.project-hero-content > p { color: var(--text); font-size: 16px; line-height: 1.6; }
+/* Title underline in the project colours */
+.project-hero-content h1::after {
+  content: '';
+  display: block;
+  width: 64px;
+  height: 4px;
+  margin-top: 14px;
+  border-radius: 4px;
+  background: linear-gradient(90deg, var(--hero-accent), var(--hero-accent-2));
+}
 /* Back button — clear pill button, well separated from badge */
 .back-link {
   display: inline-flex;
@@ -63,6 +122,11 @@
   border-color: var(--sapphire-glow);
   color: var(--sapphire);
 }
+.project-hero-banner .back-link:hover {
+  background: color-mix(in srgb, var(--hero-accent) 14%, transparent);
+  border-color: color-mix(in srgb, var(--hero-accent) 45%, transparent);
+  color: var(--hero-accent);
+}
 /* Badge sits on its own line, with generous space above title */
 .project-badge {
   display: inline-block;
@@ -77,7 +141,18 @@
   background: var(--sapphire-dim);
   margin-bottom: 14px;
 }
+.project-hero-banner .project-badge {
+  color: var(--hero-accent);
+  border-color: var(--hero-accent);
+  background: color-mix(in srgb, var(--hero-accent) 12%, transparent);
+}
 .tech-tags { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 18px; }
+/* Hero tags pick up the project colour instead of the site blue */
+.project-hero-banner .tag {
+  color: color-mix(in srgb, var(--hero-accent) 80%, white);
+  border-color: color-mix(in srgb, var(--hero-accent) 35%, transparent);
+  background: color-mix(in srgb, var(--hero-accent) 10%, transparent);
+}
 .project-hero-link { margin-top: 22px; }
 .project-hero-visual {
   position: relative;
@@ -88,11 +163,36 @@
   justify-content: center;
 }
 .project-icon-large {
-  font-size: 100px;
-  /* no glow — clean emoji/image, no drop-shadow */
+  font-size: 110px;
   display: flex;
   align-items: center;
   justify-content: center;
+  color: color-mix(in srgb, var(--hero-accent) 55%, white);
+  filter: drop-shadow(0 0 32px color-mix(in srgb, var(--hero-accent) 45%, transparent));
+}
+/* Title row: optional team crest beside the name */
+.project-hero-title {
+  display: flex;
+  align-items: flex-start;
+  gap: 18px;
+}
+.project-hero-crest {
+  width: 76px;
+  height: 76px;
+  flex-shrink: 0;
+  margin-top: -6px;
+  filter: drop-shadow(0 0 14px color-mix(in srgb, var(--hero-accent-2) 45%, transparent));
+}
+/* A page's own animated visual (e.g. the Rally Kart pixel scene): sits low
+   in the hero, a little above the bottom colour stripe */
+.project-hero-scene {
+  align-self: flex-end;
+  width: min(560px, 48%);
+  margin: 0 -24px -24px 0;   /* Dips into the hero's 72px bottom padding */
+}
+.rally-kart-pixel {
+  display: block;
+  width: 100%;
 }
 .project-body { max-width: 880px; margin: 0 auto; padding: 56px 40px 72px; }
 .project-section { margin-bottom: 56px; }
@@ -145,14 +245,6 @@
 }
 .arch-card h4 { margin: 0 0 8px; color: var(--text-h); font-size: 15px; font-weight: 600; }
 .arch-card p { margin: 0; color: var(--text); font-size: 13px; line-height: 1.55; }
-.timeline { position: relative; padding-left: 28px; }
-.timeline::before { content: ''; position: absolute; left: 6px; top: 0; bottom: 0; width: 1px; background: var(--border); }
-.timeline-item { position: relative; margin-bottom: 28px; }
-.timeline-dot { position: absolute; left: -26px; top: 4px; width: 13px; height: 13px; border-radius: 50%; background: var(--border); border: 2px solid var(--bg); }
-.timeline-item.done .timeline-dot { background: var(--sapphire); }
-.timeline-content h4 { margin: 0 0 4px; color: var(--text-h); font-size: 15px; }
-.timeline-content p { margin: 0; color: var(--text); font-size: 13px; }
-.timeline-date { font-family: var(--font); font-size: 11px; color: var(--sapphire); margin-bottom: 4px; }
 .team-grid-sm { display: flex; gap: 14px; flex-wrap: wrap; }
 .team-card-sm { display: flex; flex-direction: column; align-items: center; gap: 5px; padding: 20px 28px; background: var(--bg2); border: 1px solid var(--border); border-radius: 10px; min-width: 130px; }
 .team-avatar-sm { font-size: 28px; }

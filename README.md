@@ -8,7 +8,8 @@ A full-stack community platform for the UC Merced Robotics Society — combining
 
 **Public Website** — open to everyone
 - Homepage with an interactive 3D ASCII logo, a scrolling sponsor strip, photo project cards, and a swipeable "Meet the Board" carousel
-- Four project detail pages: BattleBots, Rally Kart, Robot Arm, Autonomous Robot, each with systems, a timeline, leads, and a photo gallery
+- Four project detail pages: BattleBots, Rally Kart, Robot Arm, Autonomous Robot, each with its own colour theme, systems, an interactive timeline, leads, and a photo gallery
+- Project heroes styled after each project (its photo, logo colours, or, for Rally Kart, an animated pixel-art kart)
 - Discord and Instagram links in the nav bar, footer, homepage, and contact page
 - Contact page with partnership cards, sponsors, socials, and the MESA Labs map
 
@@ -213,8 +214,8 @@ Robotics Society UC Merced/
 │   │
 │   ├── components/
 │   │   ├── layout/           # Navbar, Footer, ScrollToTop
-│   │   ├── ui/               # Avatar, Slideshow, TeamCarousel, InfiniteSlider, AsciiLogo, …
-│   │   ├── project/          # Hero, SystemsGrid, Timeline, LeadsGrid, …
+│   │   ├── ui/               # Avatar, Slideshow, TeamCarousel, InfiniteSlider, AsciiLogo, RallyKartPixel, …
+│   │   ├── project/          # Hero, SystemsGrid, TimelineRail, LeadsGrid, …
 │   │   └── portal/           # Sidebar, mobile tabs, ProfileModal
 │   │       ├── tabs/         # Announcements, Chat, Profile, Admin
 │   │       └── chat/         # Channel list, messages, reactions, input bar
@@ -255,6 +256,7 @@ leave `overrides.css` last.
 | The scrolling sponsor slider | `styles/components/infinite-slider.css` |
 | Login / register / members-offline screens | `styles/pages/auth.css` |
 | A project page | `styles/pages/project-detail.css` |
+| A project's timeline rail | `styles/components/timeline-rail.css` |
 | The contact page | `styles/pages/contact.css` |
 | The portal shell and sidebar | `styles/portal/layout.css` |
 | The chat | `styles/portal/chat.css` |
@@ -275,7 +277,9 @@ Colours are CSS variables defined once in `tokens.css` — use
 | Add a sponsor | Add their logo to `src/assets/`, then an entry to `SPONSORS` in `src/data/contact.js`. It shows up on the contact page and in the homepage sponsor strip |
 | Change the Discord or Instagram links | `DISCORD_URL` / `INSTAGRAM_URL` / `RALLY_INSTAGRAM_URL` in `src/data/site.js` |
 | Turn the members area (login, sign-up, portal) on or off | `MEMBERS_ENABLED` in `src/lib/config.js` |
-| Update a project's timeline | Edit `TIMELINE` in `src/data/projects/<project>.js` |
+| Update a project's timeline | Edit `TIMELINE` in `src/data/projects/<project>.js`. Set `done: true` on finished milestones: they fill in on the rail, and the first unfinished one is marked "Up Next" and shown by default |
+| Change a project page's colours or hero | Edit `HERO` in `src/data/projects/<project>.js`: `accent` / `accent2` (colours used across the hero and timeline), `photo` + `photoPos` (background photo on the right), `crest` (small logo beside the title) |
+| Put an animation in a project hero | Pass it to the hero in that page file, e.g. `<ProjectHero hero={HERO} visual={<RallyKartPixel />} />` (see `pages/projects/RallyKart.jsx`) |
 | Add photos to a project gallery | Add them to `src/assets/projects/`, then to `SLIDES` in that project's data file. Shrink phone photos first (around 1200px on the long side); a raw 4MB photo slows the page down |
 | Add a whole new project page | Add a card to `src/data/projects.js`, create `src/data/projects/<slug>.js`, copy a page from `src/pages/projects/`, add a `<Route>` in `App.jsx` |
 | Add a new API endpoint | Add the view to the right module in `backend/api/views/`, export it in `views/__init__.py`, add the path to `api/urls.py`, then add a helper to `src/lib/api.js` |

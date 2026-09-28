@@ -10,7 +10,7 @@ import ProjectHero from '../../components/project/ProjectHero'
 import ProjectSection from '../../components/project/ProjectSection'
 import Overview from '../../components/project/Overview'
 import SystemsGrid from '../../components/project/SystemsGrid'
-import Timeline from '../../components/project/Timeline'
+import TimelineRail from '../../components/project/TimelineRail'
 import LeadsGrid from '../../components/project/LeadsGrid'
 import BackToProjects from '../../components/project/BackToProjects'
 import Slideshow from '../../components/ui/Slideshow'
@@ -32,7 +32,7 @@ export default function BattleBots({ user, handleLogout }) {
         </ProjectSection>
 
         <ProjectSection title="Development Timeline">
-          <Timeline items={TIMELINE} />
+          <TimelineRail items={TIMELINE} accent={HERO.accent} />
         </ProjectSection>
 
         <ProjectSection title="Project Lead">

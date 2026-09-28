@@ -10,17 +10,18 @@ import ProjectHero from '../../components/project/ProjectHero'
 import ProjectSection from '../../components/project/ProjectSection'
 import Overview from '../../components/project/Overview'
 import SystemsGrid from '../../components/project/SystemsGrid'
-import Timeline from '../../components/project/Timeline'
+import TimelineRail from '../../components/project/TimelineRail'
 import LeadsGrid from '../../components/project/LeadsGrid'
 import BackToProjects from '../../components/project/BackToProjects'
 import Slideshow from '../../components/ui/Slideshow'
+import RallyKartPixel from '../../components/ui/RallyKartPixel'
 import { HERO, OVERVIEW, GOAL, SYSTEMS, TIMELINE, LEADS, SLIDES } from '../../data/projects/rally-kart'
 
 export default function RallyKart({ user, handleLogout }) {
   return (
     <div className="page-project">
       <Navbar user={user} handleLogout={handleLogout} />
-      <ProjectHero hero={HERO} />
+      <ProjectHero hero={HERO} visual={<RallyKartPixel />} />
 
       <div className="project-body">
         <ProjectSection title="Overview">
@@ -32,7 +33,7 @@ export default function RallyKart({ user, handleLogout }) {
         </ProjectSection>
 
         <ProjectSection title="Development Timeline">
-          <Timeline items={TIMELINE} />
+          <TimelineRail items={TIMELINE} accent={HERO.accent} />
         </ProjectSection>
 
         <ProjectSection title="Project Leads">
