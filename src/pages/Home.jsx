@@ -17,11 +17,14 @@ import Footer from '../components/layout/Footer'
 import AnimatedCard from '../components/ui/AnimatedCard'
 import Icon from '../components/ui/Icon'
 import TeamCarousel from '../components/ui/TeamCarousel'
+import InfiniteSlider from '../components/ui/InfiniteSlider'
 import AsciiLogo from '../components/ui/ascii-logo/AsciiLogo'
-import { HERO, ABOUT_PARAGRAPHS, ABOUT_FEATURES } from '../data/site'
-import { PROJECTS } from '../data/projects'
+import { HERO, ABOUT_PARAGRAPHS, ABOUT_FEATURES, DISCORD_URL, INSTAGRAM_URL } from '../data/site'
+import { PROJECTS, STATUS_TONES } from '../data/projects'
 import { BOARD_MEMBERS } from '../data/team'
+import { SPONSORS } from '../data/contact'
 import rblogo from '../assets/rblogo.jpg'
+import { MEMBERS_ENABLED } from '../lib/config'
 
 export default function Home({ user, handleLogout }) {
   const navigate = useNavigate()
@@ -76,6 +79,27 @@ export default function Home({ user, handleLogout }) {
         </div>
       </section>
 
+      {/* ── Sponsors ── scrolling strip; the open slots invite new sponsors ── */}
+      <section className="sponsor-strip" aria-labelledby="sponsor-strip-title">
+        <div className="section-label" id="sponsor-strip-title">Proudly Supported By</div>
+
+        <InfiniteSlider gap={20} speed={30} label="Club sponsors">
+          {SPONSORS.map(sponsor => <SponsorTile sponsor={sponsor} key={sponsor.name} />)}
+          <Link to="/contact#sponsors" className="sponsor-tile sponsor-tile-open">
+            <span className="sponsor-tile-logo"><Icon name="fi fi-rr-plus-small" /></span>
+            <span className="sponsor-tile-text">
+              <strong>Your Logo Here</strong>
+              <span>Become a sponsor</span>
+            </span>
+          </Link>
+        </InfiniteSlider>
+
+        <p className="sponsor-strip-cta">
+          Every visitor to our site sees this strip.{' '}
+          <Link to="/contact#sponsors">Put your logo on it →</Link>
+        </p>
+      </section>
+
       {/* ── Projects ── each card links to its own detail page ── */}
       <section className="section" id="projects">
         <div className="section-label">What We Build</div>
@@ -90,25 +114,42 @@ export default function Home({ user, handleLogout }) {
               delay={i * 80}          // Stagger so cards appear in sequence
               onClick={() => navigate(`/projects/${project.slug}`)}
             >
-              <div className="project-color-bar" style={{ background: project.color }} />
+              {/* Photo on the left; a tinted placeholder until one is added */}
+              <div
+                className={`project-photo${project.photoFit ? ` fit-${project.photoFit}` : ''}`}
+                style={{ '--project-color': project.color }}
+              >
+                {/* Blurred copy that fills the gaps around a 'contain-desktop' photo */}
+                {project.photo && project.photoFit === 'contain-desktop' && (
+                  <div className="project-photo-backdrop" style={{ backgroundImage: `url(${project.photo})` }} />
+                )}
+                {project.photo
+                  ? <img src={project.photo} alt={`${project.title} project`} loading="lazy" />
+                  : <div className="project-photo-placeholder"><ProjectIcon project={project} /></div>}
+              </div>
 
-              <div className="project-card-top">
-                <div className="project-icon">
-                  {project.logoSrc
-                    ? <img src={project.logoSrc} alt={project.title} className="card-rally-logo" />
-                    : <Icon name={project.icon} />}
+              <div className="project-body-col">
+                <div className={`project-status tone-${STATUS_TONES[project.status.toLowerCase()] ?? 'blue'}`}>
+                  {project.status}
                 </div>
-                <div className="project-status">{project.status}</div>
+
+                <h3>{project.title}</h3>
+                <p>{project.desc}</p>
+
+                <div className="tag-row">
+                  {project.tags.map(tag => <span className="tag" key={tag}>{tag}</span>)}
+                </div>
+
+                {/* Real link so the card is reachable by keyboard; the card's
+                    own onClick is skipped so it doesn't navigate twice */}
+                <Link
+                  to={`/projects/${project.slug}`}
+                  className="project-learn-more"
+                  onClick={e => e.stopPropagation()}
+                >
+                  Learn more <span className="project-learn-arrow">→</span>
+                </Link>
               </div>
-
-              <h3>{project.title}</h3>
-              <p>{project.desc}</p>
-
-              <div className="tag-row">
-                {project.tags.map(tag => <span className="tag" key={tag}>{tag}</span>)}
-              </div>
-
-              <div className="card-arrow">→</div>
             </AnimatedCard>
           ))}
         </div>
@@ -133,7 +174,7 @@ export default function Home({ user, handleLogout }) {
 
             <div style={{ marginTop: 32, display: 'flex', gap: 16, flexWrap: 'wrap' }}>
               <Link to="/register" className="btn btn-primary">Apply to Join →</Link>
-              <Link to="/login" className="btn btn-outline">Member Login</Link>
+              {MEMBERS_ENABLED && <Link to="/login" className="btn btn-outline">Member Login</Link>}
             </div>
           </div>
 
@@ -164,11 +205,45 @@ export default function Home({ user, handleLogout }) {
       <section className="cta-section">
         <img src={rblogo} alt="" className="cta-logo" />
         <h2>Ready to Build the Future?</h2>
-        <p>Applications are open. Join UC Merced's robotics engineering society.</p>
-        <Link to="/register" className="btn btn-primary btn-lg">Apply Now →</Link>
+        <p>
+          Hop into our Discord to meet the team, ask questions, and catch every
+          announcement, or follow along on Instagram.
+        </p>
+        <div className="cta-buttons">
+          <a href={DISCORD_URL} target="_blank" rel="noopener noreferrer" className="btn btn-primary btn-lg">
+            <Icon name="fi fi-brands-discord" /> Join our Discord
+          </a>
+          <a href={INSTAGRAM_URL} target="_blank" rel="noopener noreferrer" className="btn btn-outline btn-lg">
+            <Icon name="fi fi-brands-instagram" /> Follow @ucm_rs
+          </a>
+          {MEMBERS_ENABLED && <Link to="/register" className="btn btn-outline btn-lg">Apply Now →</Link>}
+        </div>
       </section>
 
       <Footer />
     </div>
   )
+}
+
+// A project's logo image if it has one, otherwise its icon-font class
+function ProjectIcon({ project }) {
+  return project.logoSrc
+    ? <img src={project.logoSrc} alt="" className="card-rally-logo" />
+    : <Icon name={project.icon} />
+}
+
+// One sponsor in the scrolling strip; links to their site when `url` is set
+function SponsorTile({ sponsor }) {
+  const content = (
+    <>
+      <span className="sponsor-tile-logo"><img src={sponsor.logo} alt="" /></span>
+      <span className="sponsor-tile-text">
+        <strong>{sponsor.name}</strong>
+        <span>{sponsor.tier}</span>
+      </span>
+    </>
+  )
+  return sponsor.url
+    ? <a href={sponsor.url} className="sponsor-tile" target="_blank" rel="noopener noreferrer">{content}</a>
+    : <div className="sponsor-tile">{content}</div>
 }

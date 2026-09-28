@@ -15,3 +15,8 @@
 .channel-add-btn i  { font-size: 16px; }
 .channel-delete-btn i { font-size: 11px; }
 .pin-badge i        { font-size: 12px; }
+
+/* Icons inside buttons and menu links: drop the font's baseline gap so the
+   icon lines up with the text next to it */
+.btn i, .mobile-link i { display: inline-flex; line-height: 1; }
+.mobile-link i { margin-right: 8px; vertical-align: -2px; }

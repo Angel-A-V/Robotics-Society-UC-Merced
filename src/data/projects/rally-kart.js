@@ -6,6 +6,7 @@ import DarrenPhoto  from '../../assets/team/Darren.jpg'
 import GustavoPhoto from '../../assets/team/Gustavo.jpg'
 import AngelPhoto   from '../../assets/team/Angel_RallyKart.png'
 import RallyLogo    from '../../assets/logos/rally.png'
+import { RALLY_INSTAGRAM_URL } from '../site'
 
 import Frame   from '../../assets/projects/rally/frame.png'
 import Engine1 from '../../assets/projects/rally/Engine.JPG'
@@ -15,6 +16,7 @@ import Engine4 from '../../assets/projects/rally/Engine4.JPG'
 import Engine5 from '../../assets/projects/rally/Engine5.JPG'
 import Engine6 from '../../assets/projects/rally/Engine6.JPG'
 import Engine7 from '../../assets/projects/rally/Engine7.JPG'
+import GoKart  from '../../assets/projects/rally/gokart.jpg'
 
 // ── Hero ──
 export const HERO = {
@@ -24,6 +26,7 @@ export const HERO = {
   accent: '#f59e0b',
   background: 'linear-gradient(135deg, #1a0e00 0%, #3d2500 50%, #1a0e00 100%)',
   logoSrc: RallyLogo,
+  link: { href: RALLY_INSTAGRAM_URL, label: 'Follow @rs_rallykart', icon: 'fi fi-brands-instagram' },
 }
 
 // ── Overview ──
@@ -143,4 +146,5 @@ export const SLIDES = [
   { src: Engine5, caption: 'Drivetrain component detail' },
   { src: Engine6, caption: 'Engine systems — powertrain ready for chassis integration' },
   { src: Engine7, caption: 'Final engine configuration and test fitting' },
+  { src: GoKart,  caption: 'This go kart was our project before Rally Kart' },
 ]

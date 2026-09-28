@@ -60,17 +60,18 @@ export default function TeamCarousel({ members, label = 'Board member carousel' 
   const sidePad = isMobile ? 16 : SIDE_PAD
   const step = cardW + GAP
 
-  // Track offset that puts card 0 in the middle of the viewport
+  // Track offset that puts card 0 in the middle of the viewport. viewportW is
+  // the content width (ResizeObserver excludes padding), so no padding to subtract.
   const centerOffset = useMemo(() => {
-    const available = Math.max(0, (viewportW || 1200) - sidePad * 2)
+    const available = viewportW || 1200
     return (available - cardW) / 2
-  }, [viewportW, cardW, sidePad])
+  }, [viewportW, cardW])
 
   const x = useMotionValue(0)
 
-  // Start on the middle card. indexRef mirrors index for event handlers,
-  // so a fast double-click moves two cards rather than one.
-  const [index, setIndex] = useState(() => Math.floor(count / 2))
+  // Start on the first card (the President). indexRef mirrors index for
+  // event handlers, so a fast double-click moves two cards rather than one.
+  const [index, setIndex] = useState(0)
   const indexRef = useRef(index)
 
   const snapToIndex = useCallback((next, { immediate = false } = {}) => {

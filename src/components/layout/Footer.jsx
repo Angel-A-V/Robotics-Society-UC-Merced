@@ -7,8 +7,10 @@
 // Styles: styles/components/footer.css
 
 import { Link, useLocation } from 'react-router-dom'
-import { CLUB_NAME, CLUB_SCHOOL, COPYRIGHT_YEAR, FOOTER_LINKS } from '../../data/site'
+import { CLUB_NAME, CLUB_SCHOOL, COPYRIGHT_YEAR, FOOTER_LINKS, COMMUNITY_LINKS } from '../../data/site'
+import Icon from '../ui/Icon'
 import rblogo from '../../assets/rblogo.jpg'
+import { MEMBERS_ENABLED } from '../../lib/config'
 
 export default function Footer() {
   const isHome = useLocation().pathname === '/'
@@ -23,13 +25,23 @@ export default function Footer() {
       <p>{CLUB_SCHOOL}</p>
 
       <div className="footer-links">
-        {FOOTER_LINKS.map(link => (
+        {FOOTER_LINKS.filter(link => MEMBERS_ENABLED || !link.membersOnly).map(link => (
           link.to === '/' && isHome
             ? <a key={link.label} href="/"
                 onClick={(e) => { e.preventDefault(); window.scrollTo({ top: 0, behavior: 'smooth' }) }}>
                 {link.label}
               </a>
             : <Link key={link.label} to={link.to}>{link.label}</Link>
+        ))}
+      </div>
+
+      {/* Discord + Instagram accounts */}
+      <div className="footer-socials">
+        {COMMUNITY_LINKS.map(link => (
+          <a key={link.label} href={link.href} target="_blank" rel="noopener noreferrer"
+            className="footer-social" aria-label={`${link.label} (${link.handle})`} title={link.handle}>
+            <Icon name={link.icon} />
+          </a>
         ))}
       </div>
 

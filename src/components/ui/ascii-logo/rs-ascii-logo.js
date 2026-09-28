@@ -144,14 +144,14 @@
         if (s.reveal > this.rows * 0.6) s.depth += (1 - s.depth) * (1 - Math.exp(-dt * 3));
       }
       if (!s.drag) {
-        s.vy += ((auto ? 0.32 : 0) - s.vy) * (1 - Math.exp(-dt * 1.2));
+        s.vy += ((auto ? 0.16 : 0) - s.vy) * (1 - Math.exp(-dt * 1.2));
         s.ry += s.vy * dt;
         s.vx *= Math.exp(-dt * 3);
         const tiltT = -0.3 + (s.mIn ? s.my * 0.28 : 0);
         s.rx += s.vx * dt + (tiltT - s.rx) * (1 - Math.exp(-dt * 2.2));
         if (s.mIn) s.ry += s.mx * 0.5 * dt;
       }
-      s.vgz += ((auto ? -0.25 : 0) - s.vgz) * (1 - Math.exp(-dt * 1.4));
+      s.vgz += ((auto ? -0.12 : 0) - s.vgz) * (1 - Math.exp(-dt * 1.4));
       s.gz += s.vgz * dt;
       s.frame++;
     }

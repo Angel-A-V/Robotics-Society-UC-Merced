@@ -15,7 +15,6 @@ import {
 } from '../data/contact'
 import { CLUB_EMAIL } from '../data/site'
 import rblogo from '../assets/rblogo.jpg'
-import asucmLogo from '../assets/asucm-logo.png'
 
 export default function Contact({ user, handleLogout }) {
   return (
@@ -108,7 +107,7 @@ export default function Contact({ user, handleLogout }) {
           </div>
 
           {/* ── Sponsors ── */}
-          <div className="sponsorship-tiers">
+          <div className="sponsorship-tiers" id="sponsors">
             <h3 style={{ marginBottom: 20, color: 'var(--text-h)' }}>Our Sponsors</h3>
             <p style={{ color: 'var(--text)', fontSize: 14, marginBottom: 24, lineHeight: 1.6 }}>
               We're proud to be supported by organizations that believe in student-led engineering.
@@ -117,7 +116,7 @@ export default function Contact({ user, handleLogout }) {
             {SPONSORS.map(sponsor => (
               <div className="sponsor-feature-card" key={sponsor.name}>
                 <div className="sponsor-feature-logo">
-                  <img src={asucmLogo} alt={sponsor.name} className="sponsor-feature-img" />
+                  <img src={sponsor.logo} alt={sponsor.name} className="sponsor-feature-img" />
                 </div>
                 <div className="sponsor-feature-info">
                   <div className="sponsor-feature-name">{sponsor.name}</div>

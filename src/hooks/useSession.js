@@ -8,11 +8,14 @@
 import { useState, useEffect } from 'react'
 import * as api from '../lib/api'
 import { clearTokens, getToken } from '../lib/auth'
+import { MEMBERS_ENABLED } from '../lib/config'
 
 export function useSession() {
   const [user, setUser] = useState(null)
 
   useEffect(() => {
+    if (!MEMBERS_ENABLED) return   // Backend is switched off — don't call it
+
     const token = getToken()
     if (!token) return   // Never logged in — nothing to restore
 

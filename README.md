@@ -7,11 +7,18 @@ A full-stack community platform for the UC Merced Robotics Society — combining
 ## 🧭 Project Overview
 
 **Public Website** — open to everyone
-- Homepage with hero, project showcase, team section, and contact page
-- Four project detail pages: BattleBots, Rally Kart, Robot Arm, Autonomous Robot
-- Sponsor section, MESA Labs map, and social links
+- Homepage with an interactive 3D ASCII logo, a scrolling sponsor strip, photo project cards, and a swipeable "Meet the Board" carousel
+- Four project detail pages: BattleBots, Rally Kart, Robot Arm, Autonomous Robot, each with systems, a timeline, leads, and a photo gallery
+- Discord and Instagram links in the nav bar, footer, homepage, and contact page
+- Contact page with partnership cards, sponsors, socials, and the MESA Labs map
 
 **Members Portal** — login required, approval-based
+> ⚠️ **Currently switched off.** The backend is down, so `MEMBERS_ENABLED` in
+> `src/lib/config.js` is `false`: `/login`, `/register`, and `/portal` show a
+> "temporarily offline" page pointing people to Discord, Instagram, and email,
+> the Login links are hidden, and the site makes no backend calls. Set it back
+> to `true` to restore everything below.
+
 - Real-time Discord-style chat with channels, reactions, and file uploads
 - Announcements board managed by admins
 - Profile customization with avatar and bio
@@ -23,12 +30,14 @@ A full-stack community platform for the UC Merced Robotics Society — combining
 
 | Layer | Technology |
 |-------|-----------|
-| Frontend | React 18 + Vite |
+| Frontend | React 19 + Vite |
 | Backend | Django + Django REST Framework |
 | Real-Time | Django Channels + Daphne (WebSockets) |
 | Auth | JWT via SimpleJWT |
 | Database | SQLite (dev) → PostgreSQL (production) |
+| Animation | Framer Motion (board carousel) |
 | Styling | Vanilla CSS + Flaticon Uicons |
+| Hosting | Cloudflare Workers (static assets via Wrangler) |
 
 ---
 
@@ -123,7 +132,19 @@ Open **http://localhost:5173**
 ### 7. Create your admin account
 
 The **first account registered** on the site automatically becomes the admin.  
-Go to http://localhost:5173/register and sign up.
+Set `MEMBERS_ENABLED = true` in `src/lib/config.js` first, then go to
+http://localhost:5173/register and sign up.
+
+> Only working on the public website? Skip steps 3–7. With the members area
+> switched off, `npm run dev` on its own is all you need.
+
+---
+
+### 8. Deploy
+
+```bash
+npm run deploy     # builds, then publishes with Wrangler (Cloudflare)
+```
 
 ---
 
@@ -168,7 +189,7 @@ Robotics Society UC Merced/
 │   ├── App.jsx               # Router: every URL → a page
 │   │
 │   ├── lib/                  # Plain JavaScript, no React
-│   │   ├── config.js         # Env URLs + every size/time limit in one place
+│   │   ├── config.js         # Env URLs, MEMBERS_ENABLED switch, every size/time limit
 │   │   ├── api.js            # Every backend call lives here
 │   │   ├── auth.js           # Token storage and request headers
 │   │   ├── media.js          # Upload URLs, image detection
@@ -184,15 +205,15 @@ Robotics Society UC Merced/
 │   │   └── useEscapeKey.js
 │   │
 │   ├── data/                 # CONTENT ONLY — edit copy here, not in components
-│   │   ├── site.js           # Club info, nav/footer links, hero, about
+│   │   ├── site.js           # Club info, Discord/Instagram links, nav/footer links, hero, about
 │   │   ├── team.js           # Board members
-│   │   ├── projects.js       # The four homepage project cards
-│   │   ├── contact.js        # Partnership cards, socials, lab location
+│   │   ├── projects.js       # The four homepage project cards (photo, status, tags)
+│   │   ├── contact.js        # Partnership cards, sponsors, socials, lab location
 │   │   └── projects/         # Per-project text, timelines, leads, galleries
 │   │
 │   ├── components/
 │   │   ├── layout/           # Navbar, Footer, ScrollToTop
-│   │   ├── ui/               # Avatar, Slideshow, TeamCarousel, AsciiLogo, …
+│   │   ├── ui/               # Avatar, Slideshow, TeamCarousel, InfiniteSlider, AsciiLogo, …
 │   │   ├── project/          # Hero, SystemsGrid, Timeline, LeadsGrid, …
 │   │   └── portal/           # Sidebar, mobile tabs, ProfileModal
 │   │       ├── tabs/         # Announcements, Chat, Profile, Admin
@@ -200,6 +221,7 @@ Robotics Society UC Merced/
 │   │
 │   ├── pages/                # One file per route
 │   │   ├── Home.jsx  Contact.jsx  Login.jsx  Register.jsx  Portal.jsx
+│   │   ├── MembersOffline.jsx   # Shown at /login, /register, /portal while the backend is off
 │   │   └── projects/         # BattleBots, RallyKart, RobotArm, AutonomousRobot
 │   │
 │   ├── styles/               # See "Styling" below
@@ -228,9 +250,10 @@ leave `overrides.css` last.
 | The nav bar | `styles/components/navbar.css` |
 | A button | `styles/components/buttons.css` |
 | The footer | `styles/components/footer.css` |
-| The homepage (hero, cards) | `styles/pages/home.css` |
+| The homepage (hero, sponsor strip, project cards) | `styles/pages/home.css` |
 | The "Meet the Board" carousel | `styles/components/team-carousel.css` |
-| Login / register screens | `styles/pages/auth.css` |
+| The scrolling sponsor slider | `styles/components/infinite-slider.css` |
+| Login / register / members-offline screens | `styles/pages/auth.css` |
 | A project page | `styles/pages/project-detail.css` |
 | The contact page | `styles/pages/contact.css` |
 | The portal shell and sidebar | `styles/portal/layout.css` |
@@ -247,9 +270,13 @@ Colours are CSS variables defined once in `tokens.css` — use
 | Task | What to do |
 |---|---|
 | Change any wording on the site | Edit the matching file in `src/data/` |
-| Add a board member | Add a photo to `src/assets/team/`, then an entry in `src/data/team.js` |
+| Add a board member | Add a photo to `src/assets/team/`, then an entry in `src/data/team.js` (the carousel opens on the first entry, so keep the President first) |
+| Add or change a project card photo | Add it to `src/assets/projects/<project>/`, import it in `src/data/projects.js`, and set `photo`. Photos are cropped to fill; use `photoFit: 'contain'` for logos, or `'contain-desktop'` for wide photos that crop too tightly on PC |
+| Add a sponsor | Add their logo to `src/assets/`, then an entry to `SPONSORS` in `src/data/contact.js`. It shows up on the contact page and in the homepage sponsor strip |
+| Change the Discord or Instagram links | `DISCORD_URL` / `INSTAGRAM_URL` / `RALLY_INSTAGRAM_URL` in `src/data/site.js` |
+| Turn the members area (login, sign-up, portal) on or off | `MEMBERS_ENABLED` in `src/lib/config.js` |
 | Update a project's timeline | Edit `TIMELINE` in `src/data/projects/<project>.js` |
-| Add photos to a project gallery | Add them to `src/assets/projects/`, then to `SLIDES` in that project's data file |
+| Add photos to a project gallery | Add them to `src/assets/projects/`, then to `SLIDES` in that project's data file. Shrink phone photos first (around 1200px on the long side); a raw 4MB photo slows the page down |
 | Add a whole new project page | Add a card to `src/data/projects.js`, create `src/data/projects/<slug>.js`, copy a page from `src/pages/projects/`, add a `<Route>` in `App.jsx` |
 | Add a new API endpoint | Add the view to the right module in `backend/api/views/`, export it in `views/__init__.py`, add the path to `api/urls.py`, then add a helper to `src/lib/api.js` |
 | Change an upload size limit | Three places, keep them in sync: `src/lib/config.js`, `backend/api/views/uploads.py`, `DATA_UPLOAD_MAX_MEMORY_SIZE` in `core/settings.py` |
@@ -268,7 +295,8 @@ Colours are CSS variables defined once in `tokens.css` — use
 | **Tony** | Treasurer |
 | **Praneeth** | Secretary |
 | **Windy** | Project Manager |
-| **Andrew** | Public Relations |
+| **Andrew** | Public Representative |
+| **Katelynn** | Social Media Manager |
 
 ---
 

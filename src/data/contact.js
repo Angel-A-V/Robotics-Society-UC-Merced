@@ -1,7 +1,8 @@
 // ── Contact Page Content ───────────────────────────────────────────────
 // Partnership cards, social links and the lab location block.
 
-import { CLUB_EMAIL } from './site'
+import { CLUB_EMAIL, COMMUNITY_LINKS } from './site'
+import asucmLogo from '../assets/asucm-logo.png'
 
 // Helper so every card links to the same inbox with its own subject line.
 const mailto = (subject) => `mailto:${CLUB_EMAIL}?subject=${subject} — UCM Robotics Society`
@@ -52,8 +53,9 @@ export const CONTACT_DETAILS = [
 ]
 
 // ── Socials ──
+// Discord and the Instagram accounts come from COMMUNITY_LINKS in site.js
 export const SOCIAL_LINKS = [
-  { icon: 'fi fi-brands-instagram', label: 'Instagram', handle: '@ucm_rs',   href: 'https://instagram.com/ucm_rs' },
+  ...COMMUNITY_LINKS,
   { icon: 'fi fi-brands-linkedin',  label: 'LinkedIn',  handle: 'N/A' },
   { icon: 'fi fi-brands-github',    label: 'GitHub',    handle: 'Angel-A-V', href: 'https://github.com/Angel-A-V/Robotics-Society-UC-Merced' },
 ]
@@ -72,9 +74,15 @@ export const LAB_LOCATION = {
 }
 
 // ── Sponsors ──
+// Shown on the contact page and in the scrolling sponsor strip on the homepage.
+// To add one: drop the logo in src/assets/, import it above, and add an entry.
+//   tier — the short label under their name in the homepage strip
+//   url  — optional; makes their logo in the strip link to their site
 export const SPONSORS = [
   {
     name: 'ASUCM',
+    logo: asucmLogo,
+    tier: 'Official Sponsor',
     fullName: 'Associated Students of the University of California, Merced',
     desc: 'Official student government sponsor providing funding and resources to support our robotics programs and competitions.',
   },

@@ -10,6 +10,7 @@ import Design2 from '../../assets/projects/autonomous/design2.png'
 import Design3 from '../../assets/projects/autonomous/design3.png'
 import Design4 from '../../assets/projects/autonomous/design4.png'
 import Design5 from '../../assets/projects/autonomous/design5.png'
+import ChassisSketch from '../../assets/projects/autonomous/chassis-sketch.webp'
 import RosPipe  from '../../assets/projects/autonomous/rospipe.png'
 
 // ── Hero ──
@@ -141,5 +142,6 @@ export const SLIDES = [
   { src: Design3, caption: 'Cross-section view — internal structure and component integration' },
   { src: Design4, caption: 'Exploded chassis view — modular assembly breakdown' },
   { src: Design5, caption: 'Base chassis CAD — structural frame and mounting points' },
+  { src: ChassisSketch, caption: 'Chassis sketch in Fusion 360 with the main dimensions laid out' },
   { src: RosPipe, caption: 'ROS 2 node graph — motor controller and gamepad control pipeline' },
 ]
