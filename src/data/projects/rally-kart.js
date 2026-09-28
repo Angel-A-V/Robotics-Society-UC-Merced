@@ -142,7 +142,7 @@ export const LEADS = [
     badge: 'fi fi-sr-clipboard-list',
     photoPos: 'center 30%',
     bio: 'Responsible for maintaining full-project alignment across all technical leads, including understanding each subsystem’s design goals, requirements, constraints, and integration needs. Oversees technical and financial feasibility checks and helps identify risks or conflicts between teams to keep the Rally Kart build efficient, achievable, and cohesive.',
-    // No fun fact yet: add a `fact` line here once Dylan sends one
+    fact: 'A very chill guy.',
   },
 ]
 
