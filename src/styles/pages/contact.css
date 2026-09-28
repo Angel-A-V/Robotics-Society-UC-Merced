@@ -103,7 +103,12 @@ a.contact-info-value:hover { color: var(--sapphire); text-decoration: underline;
 .social-chip-handle { font-size: 12px; color: var(--text-dim); }
 
 /* ── Sponsorship tiers ── */
-.sponsorship-tiers { display: flex; flex-direction: column; gap: 16px; }
+.sponsorship-tiers {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  scroll-margin-top: 88px;   /* Clear the sticky navbar when linked to via #sponsors */
+}
 
 /* ── Sponsor Feature Card (ASUCM) ── */
 .sponsor-feature-card {

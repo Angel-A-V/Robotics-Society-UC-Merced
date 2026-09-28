@@ -14,7 +14,9 @@
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { useState } from 'react'
 import { useScrollSpy } from '../../hooks/useScrollSpy'
-import { SCROLL_SPY_SECTIONS } from '../../data/site'
+import { SCROLL_SPY_SECTIONS, DISCORD_URL } from '../../data/site'
+import { MEMBERS_ENABLED } from '../../lib/config'
+import Icon from '../ui/Icon'
 import rblogo from '../../assets/rblogo.jpg'
 
 export default function Navbar({ user, handleLogout }) {
@@ -72,6 +74,9 @@ export default function Navbar({ user, handleLogout }) {
 
       {/* ── Account buttons ── swap between logged-in and logged-out */}
       <div className="nav-actions">
+        <a href={DISCORD_URL} target="_blank" rel="noopener noreferrer" className="btn btn-ghost nav-discord">
+          <Icon name="fi fi-brands-discord" /> Discord
+        </a>
         {user ? (
           <>
             <Link to="/portal" className="btn btn-outline">Portal</Link>
@@ -79,7 +84,9 @@ export default function Navbar({ user, handleLogout }) {
           </>
         ) : (
           <>
-            <Link to="/login" className="btn btn-ghost">Login</Link>
+            {/* Login is hidden while the members area is offline; Join still
+                leads to a page explaining how to join in the meantime */}
+            {MEMBERS_ENABLED && <Link to="/login" className="btn btn-ghost">Login</Link>}
             <Link to="/register" className="btn btn-primary">Join Club</Link>
           </>
         )}
@@ -101,6 +108,11 @@ export default function Navbar({ user, handleLogout }) {
           <a href="/#about" onClick={handleSectionClick('#about')} className="mobile-link">About</a>
           <Link to="/contact" className="mobile-link" onClick={() => setMenuOpen(false)}>Contact</Link>
 
+          <a href={DISCORD_URL} target="_blank" rel="noopener noreferrer"
+            className="mobile-link" onClick={() => setMenuOpen(false)}>
+            <Icon name="fi fi-brands-discord" /> Join our Discord
+          </a>
+
           <div className="mobile-divider" />
 
           {user ? (
@@ -111,7 +123,9 @@ export default function Navbar({ user, handleLogout }) {
             </>
           ) : (
             <>
-              <Link to="/login" className="mobile-link" onClick={() => setMenuOpen(false)}>Login</Link>
+              {MEMBERS_ENABLED && (
+                <Link to="/login" className="mobile-link" onClick={() => setMenuOpen(false)}>Login</Link>
+              )}
               <Link to="/register" className="mobile-link mobile-primary" onClick={() => setMenuOpen(false)}>Join Club</Link>
             </>
           )}

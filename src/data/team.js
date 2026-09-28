@@ -13,6 +13,7 @@ import TonyPhoto     from '../assets/team/Tony.png'
 import ParneethPhoto from '../assets/team/Parneeth.jpg'
 import WindyPhoto    from '../assets/team/Windy.jpg'
 import AndrewPhoto   from '../assets/team/Andrew.png'
+import KatelynnPhoto from '../assets/team/Katelynn.jpg'
 
 export const BOARD_MEMBERS = [
   {
@@ -56,5 +57,12 @@ export const BOARD_MEMBERS = [
     photo: AndrewPhoto,
     job: 'Creates posters, videos, and manages the public-facing presence of the club',
     fact: 'I enjoy arcade rhythm games',
+  },
+  {
+    name: 'Katelynn',
+    role: 'Social Media Manager',
+    photo: KatelynnPhoto,
+    job: "Runs the club's social media, sharing our projects, events, and announcements",
+    fact: 'I like baking and gaming',
   },
 ]

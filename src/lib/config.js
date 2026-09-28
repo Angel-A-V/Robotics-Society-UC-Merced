@@ -10,6 +10,13 @@
 export const API_BASE = import.meta.env.VITE_API_URL || ''
 export const WS_BASE  = import.meta.env.VITE_WS_URL  || ''
 
+// ── Members area on/off switch ──
+// false = the backend is offline: /login, /register and /portal show a
+// "temporarily offline" page instead, the Login links are hidden, and the
+// site makes no calls to the backend at all. Set back to true to restore
+// everything exactly as it was.
+export const MEMBERS_ENABLED = false
+
 // ── Upload limits ── keep these in sync with the backend
 // backend/api/views.py enforces the same numbers server-side; these only
 // give the user a fast error before wasting an upload.

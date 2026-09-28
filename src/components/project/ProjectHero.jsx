@@ -2,6 +2,7 @@
 // The banner at the top of every project page. Everything it shows comes
 // from the HERO object in that project's data file:
 //   title, tagline, status, accent, background, and either icon or logoSrc.
+// Optional `link: { href, label, icon }` adds a button, e.g. the team's Instagram.
 //
 // Styles: styles/pages/project-detail.css
 
@@ -9,7 +10,7 @@ import Icon from '../ui/Icon'
 import BackToProjects from './BackToProjects'
 
 export default function ProjectHero({ hero }) {
-  const { title, tagline, status, accent, background, icon, logoSrc, tags } = hero
+  const { title, tagline, status, accent, background, icon, logoSrc, tags, link } = hero
 
   return (
     <div className="project-hero-banner">
@@ -36,6 +37,13 @@ export default function ProjectHero({ hero }) {
           <div className="tech-tags">
             {tags.map(tag => <span className="tag" key={tag}>{tag}</span>)}
           </div>
+        )}
+
+        {link && (
+          <a href={link.href} target="_blank" rel="noopener noreferrer"
+            className="btn btn-outline project-hero-link">
+            <Icon name={link.icon} /> {link.label}
+          </a>
         )}
       </div>
 

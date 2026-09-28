@@ -7,6 +7,18 @@ export const CLUB_SCHOOL = 'University of California, Merced · School of Engine
 export const CLUB_EMAIL = 'nsamson@ucmerced.edu'
 export const COPYRIGHT_YEAR = 2025
 
+// ── Community & socials ──
+// Used by the nav bar, footer, homepage, contact page and members-offline page.
+export const DISCORD_URL         = 'https://discord.gg/jBS8bJ6rsN'
+export const INSTAGRAM_URL       = 'https://www.instagram.com/ucm_rs/'
+export const RALLY_INSTAGRAM_URL = 'https://www.instagram.com/rs_rallykart/'
+
+export const COMMUNITY_LINKS = [
+  { icon: 'fi fi-brands-discord',   label: 'Discord',              handle: 'Join our server', href: DISCORD_URL },
+  { icon: 'fi fi-brands-instagram', label: 'Instagram',            handle: '@ucm_rs',         href: INSTAGRAM_URL },
+  { icon: 'fi fi-brands-instagram', label: 'Rally Kart Instagram', handle: '@rs_rallykart',   href: RALLY_INSTAGRAM_URL },
+]
+
 // ── Nav bar links ──
 // `hash` links scroll to a section of the homepage; `to` links are routes.
 export const NAV_LINKS = [
@@ -20,11 +32,11 @@ export const NAV_LINKS = [
 // Homepage sections the nav bar watches to highlight the active link.
 export const SCROLL_SPY_SECTIONS = ['projects', 'team', 'about']
 
-// ── Footer links ──
+// ── Footer links ── `membersOnly` links hide while MEMBERS_ENABLED is false
 export const FOOTER_LINKS = [
   { label: 'Home',    to: '/' },
   { label: 'Contact', to: '/contact' },
-  { label: 'Login',   to: '/login' },
+  { label: 'Login',   to: '/login', membersOnly: true },
   { label: 'Join',    to: '/register' },
 ]
 

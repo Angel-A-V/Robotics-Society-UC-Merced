@@ -23,6 +23,7 @@ export default function AsciiLogo({ className = '' }) {
       ramp="Classic"
       effect="Scramble"
       transparent=""       // Let the hero grid show through
+      no-hint=""           // Hide the "Drag to orbit / Click to spin" caption
       role="img"
       aria-label="UCM Robotics Society logo"
     />

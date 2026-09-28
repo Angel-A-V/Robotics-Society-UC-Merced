@@ -1,6 +1,7 @@
 // ── Leads Grid ─────────────────────────────────────────────────────────
 // Photo + bio cards for the people running a project.
 // `photoPos` is the CSS object-position used to crop each photo nicely.
+// `fact` is optional; the Fun Fact box is left out when it's missing.
 
 import Icon from '../ui/Icon'
 
@@ -20,10 +21,12 @@ export default function LeadsGrid({ leads }) {
             <div className="lead-role-tag">{lead.role}</div>
             <h3 className="lead-name">{lead.name}</h3>
             <p className="lead-bio">{lead.bio}</p>
-            <div className="lead-fact">
-              <span className="lead-fact-label">Fun Fact</span>
-              <span className="lead-fact-text">{lead.fact}</span>
-            </div>
+            {lead.fact && (
+              <div className="lead-fact">
+                <span className="lead-fact-label">Fun Fact</span>
+                <span className="lead-fact-text">{lead.fact}</span>
+              </div>
+            )}
           </div>
         </div>
       ))}

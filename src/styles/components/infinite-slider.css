@@ -1,0 +1,42 @@
+/* ── Infinite Slider ─────────────────────────────────────────────────
+   Endless sideways scroller (components/ui/InfiniteSlider.jsx).
+   The track holds two identical halves and slides left by exactly one
+   half (--distance), then snaps back, so the loop looks seamless.
+   ────────────────────────────────────────────────────────────────── */
+
+.infinite-slider {
+  overflow: hidden;
+  /* Fade the items in and out at the edges instead of a hard cut */
+  mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+}
+.infinite-slider-track {
+  display: flex;
+  width: max-content;
+}
+.infinite-slider-track.running {
+  animation: infinite-slider-scroll var(--duration) linear infinite;
+}
+.infinite-slider.reverse .infinite-slider-track {
+  animation-direction: reverse;
+}
+/* Hold still while someone is looking at (or tabbing through) an item */
+.infinite-slider:hover .infinite-slider-track,
+.infinite-slider:focus-within .infinite-slider-track {
+  animation-play-state: paused;
+}
+.infinite-slider-set {
+  display: flex;
+  align-items: center;
+  gap: var(--gap);
+  padding-right: var(--gap);   /* Same spacing across the seam between sets */
+  flex-shrink: 0;
+}
+
+@keyframes infinite-slider-scroll {
+  from { transform: translateX(0); }
+  to   { transform: translateX(calc(-1 * var(--distance))); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .infinite-slider-track.running { animation: none; }
+}

@@ -17,6 +17,8 @@ import Contact from './pages/Contact'
 import Login from './pages/Login'
 import Register from './pages/Register'
 import Portal from './pages/Portal'
+import MembersOffline from './pages/MembersOffline'
+import { MEMBERS_ENABLED } from './lib/config'
 
 import BattleBots from './pages/projects/BattleBots'
 import RallyKart from './pages/projects/RallyKart'
@@ -48,12 +50,17 @@ export default function App() {
         <Route path="/projects/autonomous-robot" element={<AutonomousRobot {...pageProps} />} />
 
         {/* ── Auth ── these set the user on success ── */}
-        <Route path="/login" element={<Login setUser={setUser} />} />
-        <Route path="/register" element={<Register setUser={setUser} />} />
+        {/* While MEMBERS_ENABLED is false (lib/config.js) all three show the offline page */}
+        <Route path="/login"
+          element={MEMBERS_ENABLED ? <Login setUser={setUser} /> : <MembersOffline {...pageProps} />} />
+        <Route path="/register"
+          element={MEMBERS_ENABLED ? <Register setUser={setUser} /> : <MembersOffline {...pageProps} />} />
 
         {/* ── Members portal ── redirects to /login when not signed in ── */}
         <Route path="/portal"
-          element={<Portal user={user} setUser={setUser} handleLogout={logout} />} />
+          element={MEMBERS_ENABLED
+            ? <Portal user={user} setUser={setUser} handleLogout={logout} />
+            : <MembersOffline {...pageProps} />} />
       </Routes>
     </Router>
   )

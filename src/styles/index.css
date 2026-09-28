@@ -33,6 +33,7 @@
 /* ── Public pages ── */
 @import './pages/home.css';
 @import './components/team-carousel.css';
+@import './components/infinite-slider.css';
 @import './components/footer.css';
 @import './pages/auth.css';
 
