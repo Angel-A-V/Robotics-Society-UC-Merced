@@ -5,6 +5,7 @@
 import DarrenPhoto  from '../../assets/team/Darren.jpg'
 import GustavoPhoto from '../../assets/team/Gustavo.jpg'
 import AngelPhoto   from '../../assets/team/Angel_RallyKart.png'
+import DylanPhoto   from '../../assets/team/Dylan.jpg'
 import RallyCrest   from '../../assets/projects/rally/RS_RK_crest.webp'
 import { RALLY_INSTAGRAM_URL } from '../site'
 
@@ -133,6 +134,15 @@ export const LEADS = [
     photoPos: 'center 20%',
     bio: "Responsible for the vehicle's full electronics architecture, including ECU systems, custom dashboard development, gauges, battery management, starter integration, CAN bus communication networks, and future electric power steering integration for improved low-speed maneuverability.",
     fact: 'Built this website 😂',
+  },
+  {
+    photo: DylanPhoto,
+    name: 'Dylan',
+    role: 'Logistics Lead',
+    badge: 'fi fi-sr-clipboard-list',
+    photoPos: 'center 30%',
+    bio: 'Responsible for maintaining full-project alignment across all technical leads, including understanding each subsystem’s design goals, requirements, constraints, and integration needs. Oversees technical and financial feasibility checks and helps identify risks or conflicts between teams to keep the Rally Kart build efficient, achievable, and cohesive.',
+    fact: 'A very chill guy.',
   },
 ]
 
