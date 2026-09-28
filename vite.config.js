@@ -1,9 +1,11 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import { cloudflare } from "@cloudflare/vite-plugin"
+import seoPages from './vite-plugins/seo-pages.js'
 
 export default defineConfig({
-  plugins: [react(), cloudflare()],
+  // seoPages: per-page <head> tags + sitemap.xml for Google (see src/data/seo.js)
+  plugins: [react(), cloudflare(), seoPages()],
   server: {
     proxy: {
       '/api': 'http://localhost:8000',

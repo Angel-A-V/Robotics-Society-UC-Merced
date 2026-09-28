@@ -4,7 +4,67 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>UC Merced Robotics Society</title>
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <meta name="theme-color" content="#000101" />
+
+    <!-- ─── Search & link previews ───
+         These are the homepage values. At build time the seoPages plugin
+         (vite.config.js) writes a copy of this file for every page in
+         src/data/seo.js with that page's title / description / URL filled in,
+         so edit the wording there, not here. -->
+    <title>UC Merced Robotics Society | Student Robotics Club at UC Merced</title>
+    <meta name="description" content="UC Merced Robotics Society is a student-run robotics club at the University of California, Merced. We build combat robots, a rally kart, a robot arm and an autonomous robot." />
+    <meta name="robots" content="index, follow" />
+    <link rel="canonical" href="https://robotics-society-ucmerced.com/" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="UC Merced Robotics Society" />
+    <meta property="og:title" content="UC Merced Robotics Society | Student Robotics Club at UC Merced" />
+    <meta property="og:description" content="UC Merced Robotics Society is a student-run robotics club at the University of California, Merced. We build combat robots, a rally kart, a robot arm and an autonomous robot." />
+    <meta property="og:url" content="https://robotics-society-ucmerced.com/" />
+    <meta property="og:image" content="https://robotics-society-ucmerced.com/og-image.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="UC Merced Robotics Society logo with the club's four projects" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="UC Merced Robotics Society | Student Robotics Club at UC Merced" />
+    <meta name="twitter:description" content="UC Merced Robotics Society is a student-run robotics club at the University of California, Merced. We build combat robots, a rally kart, a robot arm and an autonomous robot." />
+    <meta name="twitter:image" content="https://robotics-society-ucmerced.com/og-image.png" />
+
+    <!-- Tells Google who we are: name, logo, parent university, socials -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "name": "UC Merced Robotics Society",
+      "alternateName": ["UCM Robotics Society", "UCM Robotics", "UC Merced Robotics Club"],
+      "url": "https://robotics-society-ucmerced.com/",
+      "logo": "https://robotics-society-ucmerced.com/logo-512.png",
+      "description": "A student-run robotics club at the University of California, Merced, building combat robots, a rally kart, a robot arm and an autonomous robot.",
+      "parentOrganization": {
+        "@type": "CollegeOrUniversity",
+        "name": "University of California, Merced",
+        "url": "https://www.ucmerced.edu/"
+      },
+      "location": {
+        "@type": "Place",
+        "name": "MESA Labs",
+        "address": {
+          "@type": "PostalAddress",
+          "streetAddress": "4225 Hospital Road",
+          "addressLocality": "Atwater",
+          "addressRegion": "CA",
+          "postalCode": "95301",
+          "addressCountry": "US"
+        }
+      },
+      "sameAs": [
+        "https://www.instagram.com/ucm_rs/",
+        "https://www.instagram.com/rs_rallykart/",
+        "https://discord.gg/jBS8bJ6rsN"
+      ]
+    }
+    </script>
 
     <!-- ─── Flaticon Uicons — all styles used in this project ─── -->
     <!-- fi-rr-*  Regular Rounded -->
@@ -25,6 +85,19 @@
   </head>
   <body>
     <div id="root"></div>
+
+    <!-- Plain links for crawlers and browsers that don't run JavaScript -->
+    <noscript>
+      <h1>UC Merced Robotics Society</h1>
+      <p>A student-run robotics club at the University of California, Merced.</p>
+      <ul>
+        <li><a href="/projects/battlebots">BattleBots</a></li>
+        <li><a href="/projects/rally-kart">Rally Kart</a></li>
+        <li><a href="/projects/robot-arm">Robot Arm</a></li>
+        <li><a href="/projects/autonomous-robot">Autonomous Robot</a></li>
+        <li><a href="/contact">Contact &amp; Sponsorship</a></li>
+      </ul>
+    </noscript>
     <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>

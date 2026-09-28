@@ -207,6 +207,7 @@ Robotics Society UC Merced/
 │   │
 │   ├── data/                 # CONTENT ONLY — edit copy here, not in components
 │   │   ├── site.js           # Club info, Discord/Instagram links, nav/footer links, hero, about
+│   │   ├── seo.js            # Google titles/descriptions per page (also builds the sitemap)
 │   │   ├── team.js           # Board members
 │   │   ├── projects.js       # The four homepage project cards (photo, status, tags)
 │   │   ├── contact.js        # Partnership cards, sponsors, socials, lab location
@@ -228,10 +229,28 @@ Robotics Society UC Merced/
 │   ├── styles/               # See "Styling" below
 │   └── assets/               # Images, team photos, project photos
 │
-├── index.html                # Loads the Flaticon icon fonts
+├── index.html                # Search/link-preview tags, structured data, Flaticon fonts
+├── public/                   # Copied as-is: robots.txt, og-image.png (link preview), logos
+├── vite-plugins/
+│   └── seo-pages.js          # Build step: one HTML file per page + sitemap.xml
 ├── package.json
 └── vite.config.js            # Dev-server proxy: /api and /ws → Django :8000
 ```
+
+---
+
+## 🔎 Search & Link Previews
+
+The site is a single-page app, so without help every URL would send Google
+the same empty HTML. At build time, `vite-plugins/seo-pages.js` writes a copy
+of `index.html` for each page in `src/data/seo.js` with that page's title,
+description, canonical URL and link-preview tags filled in, plus
+`sitemap.xml`. `components/layout/PageMeta.jsx` keeps the tags in sync as you
+click around. `public/robots.txt` points Google at the sitemap and keeps the
+member pages out of results.
+
+To check a page after deploying: https://search.google.com/test/rich-results
+(structured data) and https://www.opengraph.xyz (link previews).
 
 ---
 
@@ -275,6 +294,7 @@ Colours are CSS variables defined once in `tokens.css` — use
 | Add a board member | Add a photo to `src/assets/team/`, then an entry in `src/data/team.js` (the carousel opens on the first entry, so keep the President first) |
 | Add or change a project card photo | Add it to `src/assets/projects/<project>/`, import it in `src/data/projects.js`, and set `photo`. Photos are cropped to fill; use `photoFit: 'contain'` for logos, or `'contain-desktop'` for wide photos that crop too tightly on PC |
 | Add a sponsor | Add their logo to `src/assets/`, then an entry to `SPONSORS` in `src/data/contact.js`. It shows up on the contact page and in the homepage sponsor strip |
+| Change how a page appears on Google or in link previews | Edit its `title` / `description` in `src/data/seo.js`. Adding a new public page? Add it there too so it gets its own HTML file and a sitemap entry |
 | Change the Discord or Instagram links | `DISCORD_URL` / `INSTAGRAM_URL` / `RALLY_INSTAGRAM_URL` in `src/data/site.js` |
 | Turn the members area (login, sign-up, portal) on or off | `MEMBERS_ENABLED` in `src/lib/config.js` |
 | Update a project's timeline | Edit `TIMELINE` in `src/data/projects/<project>.js`. Set `done: true` on finished milestones: they fill in on the rail, and the first unfinished one is marked "Up Next" and shown by default |

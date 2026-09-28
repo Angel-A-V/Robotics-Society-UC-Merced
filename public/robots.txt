@@ -1,0 +1,10 @@
+# UC Merced Robotics Society
+User-agent: *
+Allow: /
+
+# Member-only pages
+Disallow: /login
+Disallow: /register
+Disallow: /portal
+
+Sitemap: https://robotics-society-ucmerced.com/sitemap.xml

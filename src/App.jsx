@@ -10,6 +10,7 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 
 import ScrollToTop from './components/layout/ScrollToTop'
+import PageMeta from './components/layout/PageMeta'
 import { useSession } from './hooks/useSession'
 
 import Home from './pages/Home'
@@ -37,6 +38,8 @@ export default function App() {
     <Router>
       {/* Fixes scroll position on every navigation — renders nothing */}
       <ScrollToTop />
+      {/* Keeps the tab title and search / link-preview tags in sync — renders nothing */}
+      <PageMeta />
 
       <Routes>
         {/* ── Public site ── */}
