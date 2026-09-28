@@ -3,13 +3,13 @@
 
 import TrevorPhoto from '../../assets/team/Trevor.jpg'
 
-// ── Hero ──
+// ── Hero ── colours: emerald with a teal glow
 export const HERO = {
   title: 'Robot Arm',
   tagline: 'A 6-DOF robotic arm engineered to autonomously identify targets, calculate optimal trajectories, and execute precise throwing motions using computer vision, inverse kinematics, and machine learning',
   status: 'Pending Approval',
-  accent: '#10b981',
-  background: 'linear-gradient(135deg, #001a0a 0%, #003d18 50%, #001a0a 100%)',
+  accent: '#10B981',
+  accent2: '#06B6D4',
   icon: 'fi fi-rs-robotic-arm',
   tags: ['OpenCV', 'Inverse Kinematics', 'Machine Learning', 'Servo Control', 'Raspberry Pi', 'Python'],
 }

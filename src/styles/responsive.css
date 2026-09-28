@@ -53,6 +53,13 @@
 
   /* Project detail */
   .project-hero-banner { flex-direction: column; padding: 40px 20px; min-height: auto; }
+  .project-hero-scene { align-self: stretch; width: auto; margin: 24px -20px -12px; }
+  .project-hero-crest { width: 56px; height: 56px; margin-top: -4px; }
+  .project-hero-photo {
+    width: 100%; opacity: 0.35;
+    -webkit-mask-image: linear-gradient(to bottom, black 0%, transparent 85%);
+    mask-image: linear-gradient(to bottom, black 0%, transparent 85%);
+  }
   .project-hero-content h1 { font-size: 32px; }
   .project-icon-large { font-size: 64px; margin-top: 20px; width: 100%; justify-content: center; }
   .project-icon-large img { width: 160px; height: 160px; }

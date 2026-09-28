@@ -1,0 +1,190 @@
+/* ── Timeline Rail ───────────────────────────────────────────────────
+   Horizontal, tab-like project timeline (components/project/TimelineRail.jsx).
+   --rail-accent is set per project from its HERO.accent colour.
+   ────────────────────────────────────────────────────────────────── */
+
+.timeline-rail {
+  --rail-accent: var(--sapphire);
+  --rail-dot: 18px;
+}
+
+/* Scrolls sideways only when the milestones don't fit (phones) */
+.timeline-rail-scroll {
+  overflow-x: auto;
+  scrollbar-width: thin;
+}
+/* Full width, but never narrower than 88px per milestone plus the room the
+   last angled label needs; below that the scroller takes over */
+.timeline-rail-track {
+  box-sizing: border-box;
+  width: max(100%, calc(var(--count) * 88px + var(--label-right, 0px)));
+  padding-right: var(--label-right, 0px);
+}
+.timeline-rail-grid {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(var(--count), minmax(0, 1fr));
+  padding-bottom: 6px;
+}
+
+/* ── Rail line: runs from the first dot's centre to the last one's ── */
+.timeline-rail-line {
+  position: absolute;
+  top: calc(var(--rail-dot) / 2 - 2px);
+  left: calc(100% / var(--count) / 2);
+  right: calc(100% / var(--count) / 2);
+  height: 4px;
+  border-radius: 4px;
+  background: var(--border);
+}
+.timeline-rail-fill {
+  height: 100%;
+  width: calc(var(--progress) * 100%);
+  border-radius: inherit;
+  background: var(--rail-accent);
+  box-shadow: 0 0 12px color-mix(in srgb, var(--rail-accent) 50%, transparent);
+}
+
+/* ── One milestone: angled name above, dot, date below ── */
+.timeline-rail-item {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0 4px;
+  background: none;
+  border: none;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+}
+.timeline-rail-item:focus-visible {
+  outline: none;
+}
+.timeline-rail-label {
+  position: absolute;
+  left: calc(50% + 2px);
+  bottom: calc(100% + 6px);
+  transform: rotate(-38deg);
+  transform-origin: left bottom;
+  white-space: nowrap;
+  font-size: 12.5px;
+  color: var(--text-dim);
+  transition: color 0.2s;
+}
+.timeline-rail-dot {
+  position: relative;
+  z-index: 1;
+  width: var(--rail-dot);
+  height: var(--rail-dot);
+  border-radius: 50%;
+  background: var(--bg3);
+  border: 2px solid var(--border);
+  transition: transform 0.2s, box-shadow 0.2s, background 0.2s, border-color 0.2s;
+}
+.timeline-rail-date {
+  margin-top: 10px;
+  max-width: 100%;
+  font-family: var(--font);
+  font-size: 11px;
+  line-height: 1.35;
+  text-align: center;
+  color: var(--text-dim);
+  transition: color 0.2s;
+}
+
+/* Completed: filled with the project colour */
+.timeline-rail-item.is-done .timeline-rail-dot {
+  background: var(--rail-accent);
+  border-color: var(--rail-accent);
+}
+.timeline-rail-item.is-done .timeline-rail-label { color: var(--text); }
+
+/* Up next: hollow ring that pulses */
+.timeline-rail-item.is-next .timeline-rail-dot {
+  background: var(--bg);
+  border-color: var(--rail-accent);
+  animation: timeline-rail-pulse 2s ease-out infinite;
+}
+.timeline-rail-item.is-next .timeline-rail-label { color: var(--text); }
+
+/* Hover and the currently selected milestone */
+.timeline-rail-item:hover .timeline-rail-label,
+.timeline-rail-item.is-selected .timeline-rail-label {
+  color: var(--text-h);
+}
+.timeline-rail-item:hover .timeline-rail-dot { transform: scale(1.15); }
+.timeline-rail-item.is-selected .timeline-rail-dot {
+  transform: scale(1.3);
+  box-shadow: 0 0 0 5px color-mix(in srgb, var(--rail-accent) 25%, transparent);
+}
+.timeline-rail-item.is-selected .timeline-rail-date { color: var(--rail-accent); }
+.timeline-rail-item:focus-visible .timeline-rail-dot {
+  box-shadow: 0 0 0 3px var(--bg), 0 0 0 5px var(--rail-accent);
+}
+
+@keyframes timeline-rail-pulse {
+  0%   { box-shadow: 0 0 0 0 color-mix(in srgb, var(--rail-accent) 55%, transparent); }
+  100% { box-shadow: 0 0 0 10px transparent; }
+}
+
+/* ── Details panel for the chosen milestone ── */
+.timeline-rail-panel {
+  margin-top: 22px;
+  padding: 20px 24px;
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--rail-accent);
+  border-radius: 12px;
+  animation: timeline-rail-in 0.25s ease;
+}
+.timeline-rail-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 14px;
+  margin-bottom: 10px;
+  font-family: var(--font);
+  font-size: 11px;
+  color: var(--text-dim);
+}
+.timeline-rail-status {
+  padding: 3px 10px;
+  border-radius: 20px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  font-size: 10px;
+  border: 1px solid var(--border);
+}
+.timeline-rail-status.is-done {
+  color: var(--rail-accent);
+  border-color: color-mix(in srgb, var(--rail-accent) 40%, transparent);
+  background: color-mix(in srgb, var(--rail-accent) 14%, transparent);
+}
+.timeline-rail-status.is-next {
+  color: var(--text-h);
+  border-color: var(--rail-accent);
+}
+.timeline-rail-when { color: var(--rail-accent); }
+.timeline-rail-step { margin-left: auto; }
+.timeline-rail-panel h4 {
+  margin: 0 0 6px;
+  font-size: 17px;
+  color: var(--text-h);
+}
+.timeline-rail-panel p {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--text);
+}
+
+@keyframes timeline-rail-in {
+  from { opacity: 0; transform: translateY(4px); }
+  to   { opacity: 1; transform: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .timeline-rail-item.is-next .timeline-rail-dot,
+  .timeline-rail-panel { animation: none; }
+}

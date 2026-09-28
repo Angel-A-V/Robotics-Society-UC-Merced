@@ -8,13 +8,15 @@ import SpinnerPhoto   from '../../assets/projects/battlebots/battlebot.jpg'
 import InternalsPhoto from '../../assets/projects/battlebots/internals.jpg'
 import LidPhoto       from '../../assets/projects/battlebots/lid.jpg'
 
-// ── Hero ──
+// ── Hero ── colours: the saw blade's red and the chassis' bare aluminium
 export const HERO = {
   title: 'BattleBots',
   tagline: 'Student-built combat robots, from the first CAD sketch all the way to the arena',
   status: 'Active Project',
-  accent: '#DC1111',
-  background: 'linear-gradient(135deg, #1a0505 0%, #3d0a0a 50%, #1a0505 100%)',
+  accent: '#E11D48',
+  accent2: '#94A3B8',
+  photo: SpinnerPhoto,
+  photoPos: '60% center',
   icon: 'fi fi-sr-two-swords',
   tags: ['1 lb Class', '3 lb Class', 'CAD', 'Electronics', 'Fabrication'],
 }
