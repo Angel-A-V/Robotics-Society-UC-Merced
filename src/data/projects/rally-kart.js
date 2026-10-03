@@ -22,8 +22,8 @@ import GoKart  from '../../assets/projects/rally/gokart.jpg'
 // ── Hero ── colours: the gold and blue of the Rally Kart logo
 export const HERO = {
   title: 'Rally Kart',
-  tagline: 'A student-built single-seat rally platform with a custom space-frame chassis, CAN bus electronics, and a scalable drivetrain built for performance and safety',
-  status: 'Active Project',
+  tagline: 'A student-designed hybrid all-wheel-drive rally vehicle and research platform: Nissan Leaf electric drive at the front, a Mazdaspeed3 combustion drivetrain at the rear, and a custom parametric steel tube chassis',
+  status: 'Design & Research Phase',
   accent: '#FDB913',
   accent2: '#1463FF',
   crest: RallyCrest,   // The page shows the pixel-art kart on the right (see RallyKart.jsx)
@@ -32,76 +32,102 @@ export const HERO = {
 
 // ── Overview ──
 export const OVERVIEW = [
-  'The Rally Kart project is focused on developing a lightweight, high-performance single-seat rally platform engineered for durability, safety, and future expandability. The chassis is being designed as a custom tubular space-frame structure optimized for aerodynamic efficiency, structural rigidity, balanced weight distribution, and responsive handling across aggressive driving conditions.',
-  'The platform is intended to remain lightweight enough for rapid acceleration and maneuverability while maintaining sufficient stability for high-speed cornering and uneven terrain. The initial drivetrain uses a compact 2-stroke Yamaha jet ski engine, chosen for its strong power-to-weight ratio and compact packaging. The chassis architecture is designed with long-term modularity in mind, allowing future integration of larger powertrains without a complete redesign.',
+  'Rally Kart is a student engineering project focused on the design and development of a lightweight hybrid all-wheel-drive rally vehicle. Rather than building a conventional go-kart, the team is developing a custom tubular chassis around two independent drivetrains: a Nissan Leaf electric drive system powering the front axle and a Mazdaspeed3 combustion drivetrain powering the rear axle.',
+  'The project is intended to serve as both a vehicle-development challenge and a research platform. The team plans to use testing and data collection to compare vehicle behavior under different power-delivery strategies.',
+  'The chassis is being developed as a fully parametric steel tube frame. This allows dimensions and mounting locations to evolve as suspension geometry, drivetrain packaging, driver ergonomics, battery placement, cooling, and structural requirements become better defined.',
+  'To keep the project financially realistic, the suspension strategy emphasizes adapting production automotive components rather than fabricating an entirely custom suspension system. The current design direction investigates Nissan Leaf front suspension hardware for the front axle and Mazdaspeed3 front suspension hardware for the rear axle. Because the Mazdaspeed3’s factory front brakes are too large for the team’s preferred wheel size, smaller standard Mazda3 brake components are also being studied for compatibility.',
+  'The team is currently in the research, CAD, and component-validation phase. Members are creating reference models of individual suspension and brake components, documenting dimensions and sources, and building toward complete front and rear suspension assemblies that can later be integrated into the parametric chassis.',
 ]
 
-export const GOAL = 'The goal is to create a scalable rally platform that balances performance, reliability, affordability, and driver safety.'
+// The research question the vehicle is built to answer
+export const GOAL = 'Research question: how does controlled front electric assistance affect traction and acceleration, and how much electrical energy is required to produce that improvement?'
 
-// ── Systems ──
+// ── Systems ── current direction for each system; most are still being validated
 export const SYSTEMS = [
   {
-    icon: 'fi fi-rs-building-foundation',
-    title: 'Chassis & Structural Design',
-    desc: 'Custom tubular space-frame chassis engineered for rigidity, low center of gravity, aerodynamic efficiency, and future drivetrain scalability. The frame supports modular upgrades while maintaining structural integrity and driver protection.',
+    icon: 'fi fi-sr-ruler-triangle',
+    title: 'Parametric Tube Chassis',
+    desc: 'A custom steel tube frame modeled parametrically, so it can adapt around verified suspension geometry, drivetrain packaging, battery, cooling, driver, and safety requirements instead of a donor car’s dimensions.',
   },
   {
-    icon: 'fi fi-sr-settings',
-    title: 'Powertrain',
-    desc: 'Initial configuration based on a 2-stroke Yamaha jet ski engine, chosen for its compact form factor and strong power-to-weight ratio. The platform is engineered to support future higher-output engine and transmission upgrades.',
+    icon: 'fi fi-sr-charging-station',
+    title: 'Front Electric Drive',
+    desc: 'A Nissan Leaf electric motor and reduction drive powers the front axle, providing controlled electric assistance for traction and acceleration.',
+  },
+  {
+    icon: 'fi fi-sr-engine',
+    title: 'Rear Combustion Drivetrain',
+    desc: 'A Mazdaspeed3 engine and six-speed transaxle, relocated to drive the rear axle. Orientation, lubrication, turbo oil drainage, and CV angles are still being verified.',
+  },
+  {
+    icon: 'fi fi-sr-car-mechanic',
+    title: 'Donor-Based Suspension',
+    desc: 'Nissan Leaf MacPherson suspension at the front, and Mazdaspeed3 front MacPherson hardware repurposed at the rear with an engineered linkage to fix rear toe. Proven hardware keeps the first prototype affordable.',
   },
   {
     icon: 'fi fi-sr-tire',
-    title: 'Suspension & Handling',
-    desc: 'Long-travel suspension geometry designed for responsive handling, terrain compliance, and vehicle stability during aggressive rally driving. Built to withstand uneven terrain, rapid directional changes, and moderate airborne impacts.',
+    title: 'Wheels & Brakes',
+    desc: '15-inch wheels are the working target for rally proportions and tire sidewall. Smaller standard Mazda3 brakes are being studied for the rear so they clear that wheel size.',
   },
   {
-    icon: 'fi fi-sr-car-battery',
-    title: 'Electronics & Control',
-    desc: 'Custom electrical architecture integrating dashboard systems, gauges, battery management, starter systems, and CAN bus communication networks. Future systems include electric power steering for improved low-speed precision.',
+    icon: 'fi fi-sr-temperature-high',
+    title: 'Cooling & Packaging',
+    desc: 'A custom cooling layout lets radiator placement, ducting, fans, and coolant routing be optimized around the vehicle rather than copied from the donor cars.',
   },
   {
-    icon: 'fi fi-sr-rules-alt',
-    title: 'Safety Systems',
-    desc: 'Reinforced structural members, rollover protection design, kill-switch systems, and driver-focused safety engineering intended to achieve motorsport-inspired safety standards while remaining cost-effective and manufacturable.',
+    icon: 'fi fi-sr-chart-line-up',
+    title: 'Research & Instrumentation',
+    desc: 'Planned data collection on acceleration, wheel slip, motor power, battery energy use, and temperatures, comparing rear-only drive against different levels of front electric assist.',
   },
   {
-    icon: 'fi fi-sr-ruler-triangle',
-    title: 'Modularity & Scalability',
-    desc: 'The chassis mounting architecture is designed for long-term upgradability, allowing integration of larger automotive powertrains and manual transmissions without requiring a complete platform redesign.',
+    icon: 'fi fi-sr-shield-check',
+    title: 'Safety & Validation',
+    desc: 'Suspension, brakes, high-voltage electrics, fuel, and welded structure are all safety-critical. Every component is reviewed for strength, fatigue, clearance, and shutdown behavior before it is fabricated or driven.',
   },
+]
+
+// ── Current priorities ── in the order the team is tackling them
+export const PRIORITIES = [
+  'Build a reliable CAD library of donor suspension, hub, brake, and wheel components.',
+  'Verify compatibility between the selected donor components and 15-inch wheels.',
+  'Establish front and rear suspension geometry and mounting locations.',
+  'Package the Nissan Leaf front drive system and Mazdaspeed3 rear drivetrain into the parametric chassis.',
+  'Develop a safe rear toe-control solution for the repurposed Mazdaspeed3 front suspension.',
+  'Define wheel travel, ground clearance, track width, loaded vehicle mass, and rally load cases.',
+  'Design custom cooling, electrical, braking, and control systems around the final vehicle layout.',
+  'Instrument the vehicle so the team can study traction, acceleration, energy use, temperatures, and system behavior during testing.',
 ]
 
 // ── Timeline ── set `done: true` as each milestone is completed
 export const TIMELINE = [
   {
     date: 'Fall 2026',
-    title: 'Concept and Design',
-    desc: 'Initial chassis architecture, CAD development, drivetrain packaging, suspension layout, and early frame assembly work begin',
+    title: 'New Direction',
+    desc: 'The project moves from a single-engine go-kart to a hybrid all-wheel-drive rally vehicle, with Nissan Leaf electric drive at the front, a Mazdaspeed3 drivetrain at the rear, and a parametric steel tube chassis',
     done: true,
   },
   {
-    date: 'Fall 2026 to Spring 2027',
-    title: 'Electronics Integration',
-    desc: 'Custom dashboard systems, CAN bus architecture, wiring, battery systems, starter systems, and control electronics developed and tested',
-    done: false,
-  },
-  {
-    date: 'Spring 2027',
-    title: 'Fabrication and Assembly',
-    desc: 'Tubular frame fabrication, suspension mounting, drivetrain integration, and structural assembly progress into full rolling chassis development',
+    date: 'Fall 2026',
+    title: 'Research and Component CAD',
+    desc: 'Building a CAD library of donor suspension, hub, brake, and wheel components, with every dimension labelled as verified, measured, estimated, or missing',
     done: false,
   },
   {
     date: 'To Be Announced',
-    title: 'Initial Testing',
-    desc: 'Vehicle systems validation, drivetrain testing, steering calibration, and early terrain evaluation',
+    title: 'Suspension and Packaging',
+    desc: 'Validating 15-inch wheel and brake clearance, setting front and rear suspension geometry, designing rear toe control, and packaging both drivetrains into the chassis',
     done: false,
   },
   {
     date: 'To Be Announced',
-    title: 'Rally Configuration',
-    desc: 'Suspension tuning, performance refinement, electric power steering integration, and full rally capability testing',
+    title: 'Systems Design',
+    desc: 'Cooling, electrical, braking, and control systems designed around the final vehicle layout, followed by safety review of all critical components',
+    done: false,
+  },
+  {
+    date: 'To Be Announced',
+    title: 'Fabrication and Testing',
+    desc: 'Frame fabrication and assembly, then instrumented testing that compares rear-only drive with front electric assist for traction, acceleration, and energy use',
     done: false,
   },
 ]
@@ -146,15 +172,16 @@ export const LEADS = [
   },
 ]
 
-// ── Build gallery ──
+// ── Build gallery ── the chassis CAD is current; the engine photos are from
+// the earlier single-engine kart concept
 export const SLIDES = [
-  { src: Frame,   caption: 'Space-frame chassis — the structural backbone of the Rally Kart' },
-  { src: Engine1, caption: 'Yamaha 2-stroke engine — selected for its power-to-weight ratio' },
-  { src: Engine2, caption: 'Engine detail — compact packaging for optimal chassis balance' },
-  { src: Engine3, caption: 'Powertrain integration work in progress' },
-  { src: Engine4, caption: 'Engine bay assembly and mounting' },
-  { src: Engine5, caption: 'Drivetrain component detail' },
-  { src: Engine6, caption: 'Engine systems — powertrain ready for chassis integration' },
-  { src: Engine7, caption: 'Final engine configuration and test fitting' },
+  { src: Frame,   caption: 'Parametric tube-frame chassis: the same model adjusted from its baseline layout without rebuilding it' },
+  { src: Engine1, caption: 'Earlier concept: the Yamaha 2-stroke engine from the first design' },
+  { src: Engine2, caption: 'Earlier concept: engine detail' },
+  { src: Engine3, caption: 'Earlier concept: powertrain integration work' },
+  { src: Engine4, caption: 'Earlier concept: engine bay assembly and mounting' },
+  { src: Engine5, caption: 'Earlier concept: drivetrain component detail' },
+  { src: Engine6, caption: 'Earlier concept: engine systems' },
+  { src: Engine7, caption: 'Earlier concept: engine configuration and test fitting' },
   { src: GoKart,  caption: 'This go kart was our project before Rally Kart' },
 ]

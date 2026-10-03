@@ -41,10 +41,10 @@ export const PROJECTS = [
   {
     slug: 'rally-kart',
     title: 'Rally Kart',
-    desc: 'A student-built single-seat rally platform featuring a custom tubular space-frame chassis, CAN bus electronics, custom dashboard, and a scalable drivetrain engineered for performance, safety, and future expandability.',
+    desc: 'A student-designed hybrid all-wheel-drive rally vehicle and research platform, pairing a Nissan Leaf electric front drive with a Mazdaspeed3 combustion rear drivetrain on a custom parametric steel tube chassis.',
     icon: null,
     logoSrc: RallyLogo,
-    tags: ['Chassis Design', 'CAN Bus', 'Electronics'],
+    tags: ['Hybrid AWD', 'Chassis Design', 'Suspension', 'CAD'],
     photo: RallyPhoto,
     photoFit: 'contain',
     status: 'Active',

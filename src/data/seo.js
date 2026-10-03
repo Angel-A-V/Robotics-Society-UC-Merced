@@ -32,7 +32,7 @@ export const PAGES = [
   {
     path: '/projects/rally-kart',
     title: `Rally Kart | ${SITE_NAME}`,
-    description: 'A student-built single-seat rally kart at UC Merced with a custom tubular space-frame chassis, CAN bus electronics and a Yamaha 2-stroke drivetrain.',
+    description: 'A student-designed hybrid all-wheel-drive rally vehicle at UC Merced, with a Nissan Leaf electric front drive, a Mazdaspeed3 rear drivetrain and a parametric steel tube chassis.',
     priority: '0.8',
   },
   {

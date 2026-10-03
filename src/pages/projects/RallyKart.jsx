@@ -12,10 +12,11 @@ import Overview from '../../components/project/Overview'
 import SystemsGrid from '../../components/project/SystemsGrid'
 import TimelineRail from '../../components/project/TimelineRail'
 import LeadsGrid from '../../components/project/LeadsGrid'
+import PriorityList from '../../components/project/PriorityList'
 import BackToProjects from '../../components/project/BackToProjects'
 import Slideshow from '../../components/ui/Slideshow'
 import RallyKartPixel from '../../components/ui/RallyKartPixel'
-import { HERO, OVERVIEW, GOAL, SYSTEMS, TIMELINE, LEADS, SLIDES } from '../../data/projects/rally-kart'
+import { HERO, OVERVIEW, GOAL, SYSTEMS, PRIORITIES, TIMELINE, LEADS, SLIDES } from '../../data/projects/rally-kart'
 
 export default function RallyKart({ user, handleLogout }) {
   return (
@@ -30,6 +31,10 @@ export default function RallyKart({ user, handleLogout }) {
 
         <ProjectSection title="Systems">
           <SystemsGrid systems={SYSTEMS} />
+        </ProjectSection>
+
+        <ProjectSection title="Current Priorities">
+          <PriorityList items={PRIORITIES} />
         </ProjectSection>
 
         <ProjectSection title="Development Timeline">
