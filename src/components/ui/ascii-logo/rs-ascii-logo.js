@@ -1,7 +1,8 @@
 /* <rs-ascii-logo> — interactive ASCII 3D logo.
    Attributes: src (logo image, default "rblogo.jpg"), palette (Logo|Blueprint|Steel), ramp (Classic|Binary|Blocks),
    effect (Scramble|Repel|None), scale (0.5–1.4), no-autorotate, no-hint, transparent
-   Site change: the hint text is kept on one line and shrunk on phones. */
+   Site changes: the hint text is kept on one line and shrunk on phones; vertical
+   drags tilt the logo the way the pointer moves (they used to be inverted). */
 (() => {
   const PALETTES = {
     Logo: { bg: "#050607", gear: "#2f74e0", letter: "#e5a93a", dim: "#6b7078" },
@@ -89,8 +90,8 @@
           s.mc = (x - this.offX) / this.cw; s.mr = (y - this.offY) / this.fs;
           if (!s.drag) return;
           const dx = x - s.drag.x, dy = y - s.drag.y, now = performance.now(), dt = Math.max(1, now - s.drag.t) / 1000, k = 4.2 / Math.min(r.width, r.height);
-          s.ry += dx * k; s.rx = Math.max(-1.3, Math.min(1.3, s.rx - dy * k));
-          s.vy = (dx * k) / dt; s.vx = (-dy * k) / dt;
+          s.ry += dx * k; s.rx = Math.max(-1.3, Math.min(1.3, s.rx + dy * k));
+          s.vy = (dx * k) / dt; s.vx = (dy * k) / dt;
           s.drag.x = x; s.drag.y = y; s.drag.t = now;
           s.drag.moved = Math.max(s.drag.moved, Math.hypot(x - s.drag.x0, y - s.drag.y0));
           if (s.drag.moved > 6) this.dismissHint();
